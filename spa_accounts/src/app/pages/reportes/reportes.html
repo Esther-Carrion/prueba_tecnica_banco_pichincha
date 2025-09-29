@@ -1,0 +1,196 @@
+<div *ngIf="error()" class="alert alert--error">
+  <span class="alert__icon"><i class="material-icons">warning</i></span>
+  <span class="alert__message">{{ error() }}</span>
+  <button class="alert__close" (click)="clearMessages()"><i class="material-icons">close</i></button>
+</div>
+
+<div *ngIf="successMessage()" class="alert alert--success">
+  <span class="alert__icon"><i class="material-icons">check_circle</i></span>
+  <span class="alert__message">{{ successMessage() }}</span>
+  <button class="alert__close" (click)="clearMessages()"><i class="material-icons">close</i></button>
+</div>
+
+<section class="card">
+  <div class="card__header">
+    <h2 class="card__title">Estado de Cuenta</h2>
+    <p class="card__subtitle">Generar reportes del estado de cuenta por cliente y fechas</p>
+  </div>
+
+  <div class="report-filters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label class="filter-label" for="cliente-select">
+          Cliente <span class="form-required">*</span>
+        </label>
+        <select 
+          id="cliente-select"
+          class="filter-select"
+          [value]="identificacionSeleccionada()"
+          (change)="onClienteChange($any($event.target).value)"
+          [disabled]="isLoading()"
+        >
+          <option value="">Seleccionar cliente</option>
+          <option 
+            *ngFor="let cliente of clientes()" 
+            [value]="cliente.identificacion"
+          >
+            {{ cliente.identificacion }} - {{ cliente.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="fecha-desde">
+          Fecha desde <span class="form-required">*</span>
+        </label>
+        <input 
+          id="fecha-desde"
+          type="date" 
+          class="filter-input"
+          [value]="fechaDesde()"
+          (change)="onFechaDesdeChange($any($event.target).value)"
+          [disabled]="isLoading()"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="fecha-hasta">
+          Fecha hasta <span class="form-required">*</span>
+        </label>
+        <input 
+          id="fecha-hasta"
+          type="date" 
+          class="filter-input"
+          [value]="fechaHasta()"
+          (change)="onFechaHastaChange($any($event.target).value)"
+          [disabled]="isLoading()"
+        />
+      </div>
+
+      <div class="filter-actions">
+        <button 
+          class="btn btn--primary"
+          (click)="generarReporte()"
+          [disabled]="isLoading() || !identificacionSeleccionada() || !fechaDesde() || !fechaHasta()"
+        >
+          <span *ngIf="isLoading()" class="btn-spinner"></span>
+          <span class="btn__icon"><i class="material-icons">analytics</i></span>
+          {{ isLoading() ? 'Generando...' : 'Generar Reporte' }}
+        </button>
+
+        <button 
+          *ngIf="reporteGenerado()"
+          class="btn btn--navy"
+          (click)="generarReportePdf()"
+          [disabled]="isGeneratingPdf()"
+        >
+          <span *ngIf="isGeneratingPdf()" class="btn-spinner"></span>
+          <span class="btn__icon"><i class="material-icons">picture_as_pdf</i></span>
+          {{ isGeneratingPdf() ? 'Generando PDF...' : 'Generar PDF' }}
+        </button>
+
+        <button 
+          *ngIf="reporteGenerado()"
+          class="btn btn--outline"
+          (click)="limpiarFormulario()"
+        >
+          <span class="btn__icon"><i class="material-icons">clear</i></span>
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading()" class="loading">
+    <div class="loading__spinner"></div>
+    <span>Generando reporte...</span>
+  </div>
+
+  <!-- Report results -->
+  <div *ngIf="reporteGenerado() && !isLoading()" class="report-results">
+    <!-- PDF Preview -->
+    <div class="report-section">
+      <h3 class="section-title">Vista previa del reporte</h3>
+      <div *ngIf="isPreviewLoading()" class="loading">
+        <div class="loading__spinner"></div>
+        <span>Cargando vista previa...</span>
+      </div>
+      <div *ngIf="!isPreviewLoading() && pdfUrl()" class="pdf-preview">
+        <iframe [src]="pdfUrl()" width="100%" height="600" style="border: 1px solid #e5e7eb; border-radius: 8px;"></iframe>
+      </div>
+      <div *ngIf="!isPreviewLoading() && !pdfUrl()" class="empty-state">
+        <div class="empty-state__icon"><i class="material-icons">picture_as_pdf</i></div>
+        <div class="empty-state__title">No se pudo cargar la vista previa</div>
+        <div class="empty-state__description">Puedes intentar descargar el PDF con el botón "Generar PDF"</div>
+      </div>
+    </div>
+
+    <!-- Movements detail section -->
+    <div class="report-section">
+  <h3 class="section-title">Detalle de Movimientos</h3>
+      
+      <!-- Movements table -->
+      <div class="table-container enhanced-table">
+        <table class="data-table report-table" *ngIf="movimientosReporte().length > 0">
+          <thead class="data-table__header report-table__header">
+            <tr>
+              <th class="col-date">Fecha</th>
+              <th class="col-account">Cuenta</th>
+              <th class="col-type">Tipo</th>
+              <th class="col-initial">Saldo Inicial</th>
+              <th class="col-movement">Movimiento</th>
+              <th class="col-final">Saldo Final</th>
+            </tr>
+          </thead>
+          <tbody class="data-table__body">
+            <tr *ngFor="let movimiento of movimientosReporte(); let i = index; trackBy: trackMovimiento" 
+                class="movement-row"
+                [class.row-even]="i % 2 === 0"
+                [class.row-odd]="i % 2 !== 0">
+              <td class="font-semibold col-date">{{ formatDate(movimiento.fecha) }}</td>
+              <td class="col-account">
+                <div class="account-info">
+                  <span class="account-number">{{ movimiento.cuenta.numeroCuenta }}</span>
+                </div>
+              </td>
+              <td class="col-type">
+                <span 
+                  class="badge movement-badge" 
+                  [ngClass]="getMovimientoTypeClass(movimiento.valor)">
+                  {{ getMovimientoTypeIcon(movimiento.valor) }} {{ getMovimientoType(movimiento.valor) }}
+                </span>
+              </td>
+              <td class="text-right font-semibold col-initial">
+                {{ movimiento.saldoInicial | currency:'USD':'symbol':'1.2-2' }}
+              </td>
+              <td class="text-right font-semibold col-movement"
+                  [ngClass]="{
+                    'text-green-600': movimiento.valor > 0,
+                    'text-red-600': movimiento.valor < 0
+                  }">
+                <span class="movement-amount">
+                  {{ movimiento.valor | currency:'USD':'symbol':'1.2-2' }}
+                </span>
+              </td>
+              <td class="text-right font-semibold col-final highlight-balance">
+                {{ movimiento.saldo | currency:'USD':'symbol':'1.2-2' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty movements -->
+        <div *ngIf="movimientosReporte().length === 0" class="empty-state">
+          <div class="empty-state__icon"><i class="material-icons">receipt_long</i></div>
+          <div class="empty-state__title">Sin movimientos</div>
+          <div class="empty-state__description">
+            No hay movimientos registrados para el período seleccionado
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+</section>

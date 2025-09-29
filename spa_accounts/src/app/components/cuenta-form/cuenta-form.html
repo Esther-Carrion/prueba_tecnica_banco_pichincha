@@ -1,0 +1,110 @@
+<form [formGroup]="cuentaForm" (ngSubmit)="onSubmit()" class="cuenta-form">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="clienteIdentificacion" class="form-label">
+        Identificación del Cliente <span class="form-required">*</span>
+      </label>
+      <input
+        id="clienteIdentificacion"
+        type="text"
+        formControlName="clienteIdentificacion"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('clienteIdentificacion')"
+        placeholder="Ej: 123456789"
+        maxlength="15"
+        [readonly]="isEditMode"
+      />
+      <div *ngIf="isFieldInvalid('clienteIdentificacion')" class="form-error">
+        {{ getFieldError('clienteIdentificacion') }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="numeroCuenta" class="form-label">
+        Número de Cuenta <span class="form-required">*</span>
+      </label>
+      <input
+        id="numeroCuenta"
+        type="text"
+        formControlName="numeroCuenta"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('numeroCuenta')"
+        placeholder="Ej: 478758"
+        maxlength="10"
+        [readonly]="isEditMode"
+      />
+      <div *ngIf="isFieldInvalid('numeroCuenta')" class="form-error">
+        {{ getFieldError('numeroCuenta') }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="tipoCuenta" class="form-label">
+        Tipo de Cuenta <span class="form-required">*</span>
+      </label>
+      <select
+        id="tipoCuenta"
+        formControlName="tipoCuenta"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('tipoCuenta')"
+      >
+        <option value="">Seleccionar...</option>
+        <option value="AHORROS">Ahorros</option>
+        <option value="CORRIENTE">Corriente</option>
+      </select>
+      <div *ngIf="isFieldInvalid('tipoCuenta')" class="form-error">
+        {{ getFieldError('tipoCuenta') }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="saldoInicial" class="form-label">
+        Saldo Inicial <span class="form-required">*</span>
+      </label>
+      <input
+        id="saldoInicial"
+        type="number"
+        formControlName="saldoInicial"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('saldoInicial')"
+        placeholder="Ej: 1000.00"
+        min="0"
+        max="999999999"
+        step="0.01"
+      />
+      <div *ngIf="isFieldInvalid('saldoInicial')" class="form-error">
+        {{ getFieldError('saldoInicial') }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group" *ngIf="isEditMode">
+    <label class="form-checkbox-group">
+      <input
+        type="checkbox"
+        formControlName="estado"
+        class="form-checkbox"
+      />
+      <span class="form-checkbox-label">Cuenta Activa</span>
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button 
+      type="button" 
+      class="btn btn--outline"
+      (click)="onCancel()"
+      [disabled]="isSubmitting"
+    >
+      Cancelar
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn--primary"
+      [disabled]="!cuentaForm.valid || isSubmitting"
+    >
+      <span *ngIf="isSubmitting" class="btn-spinner">⌛</span>
+      {{ isEditMode ? 'Actualizar' : 'Crear' }} Cuenta
+    </button>
+  </div>
+</form>

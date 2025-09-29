@@ -1,0 +1,149 @@
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="client-form">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="identificacion" class="form-label">
+        Identificación <span class="form-required">*</span>
+      </label>
+      <input
+        id="identificacion"
+        type="text"
+        formControlName="identificacion"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('identificacion')"
+        placeholder="Ej: 123456789"
+        maxlength="15"
+        [readonly]="isEditMode"
+      />
+      <div *ngIf="isFieldInvalid('identificacion')" class="form-error">
+        {{ getFieldError('identificacion') }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="telefono" class="form-label">
+        Teléfono <span class="form-required">*</span>
+      </label>
+      <input
+        id="telefono"
+        type="tel"
+        formControlName="telefono"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('telefono')"
+        placeholder="Ej: 0987654321"
+        maxlength="15"
+      />
+      <div *ngIf="isFieldInvalid('telefono')" class="form-error">
+        {{ getFieldError('telefono') }}
+      </div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="nombre" class="form-label">
+        Nombre Completo <span class="form-required">*</span>
+      </label>
+      <input
+        id="nombre"
+        type="text"
+        formControlName="nombre"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('nombre')"
+        placeholder="Ej: Juan Carlos Pérez García"
+        maxlength="100"
+      />
+      <div *ngIf="isFieldInvalid('nombre')" class="form-error">
+        {{ getFieldError('nombre') }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="genero" class="form-label">
+        Género <span class="form-required">*</span>
+      </label>
+      <select
+        id="genero"
+        formControlName="genero"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('genero')"
+      >
+        <option value="">Seleccionar...</option>
+        <option value="MASCULINO">Masculino</option>
+        <option value="FEMENINO">Femenino</option>
+        <option value="OTRO">Otro</option>
+      </select>
+      <div *ngIf="isFieldInvalid('genero')" class="form-error">
+        {{ getFieldError('genero') }}
+      </div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="edad" class="form-label">
+        Edad <span class="form-required">*</span>
+      </label>
+      <input
+        id="edad"
+        type="number"
+        formControlName="edad"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('edad')"
+        placeholder="Ej: 30"
+        min="18"
+        max="120"
+      />
+      <div *ngIf="isFieldInvalid('edad')" class="form-error">
+        {{ getFieldError('edad') }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="contrasena" class="form-label">
+        Contraseña <span class="form-required">*</span>
+      </label>
+      <input
+        id="contrasena"
+        type="password"
+        formControlName="contrasena"
+        class="form-input"
+        [class.form-input--error]="isFieldInvalid('contrasena')"
+        placeholder="Mínimo 6 caracteres"
+        maxlength="20"
+      />
+      <div *ngIf="isFieldInvalid('contrasena')" class="form-error">
+        {{ getFieldError('contrasena') }}
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="direccion" class="form-label">
+      Dirección <span class="form-required">*</span>
+    </label>
+    <textarea
+      id="direccion"
+      formControlName="direccion"
+      class="form-input form-textarea"
+      [class.form-input--error]="isFieldInvalid('direccion')"
+      placeholder="Ej: Av. Amazonas N39-123 y Arízaga, Quito"
+      maxlength="200"
+      rows="3"
+    ></textarea>
+    <div *ngIf="isFieldInvalid('direccion')" class="form-error">
+      {{ getFieldError('direccion') }}
+    </div>
+  </div>
+  <div class="form-actions">
+    <button 
+      type="button" 
+      class="btn btn--outline"
+      (click)="onCancel()"
+      [disabled]="isSubmitting"
+    >
+      Cancelar
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn--primary"
+      [disabled]="!clientForm.valid || isSubmitting"
+    >
+      <span *ngIf="isSubmitting" class="btn-spinner">⌛</span>
+      {{ isEditMode ? 'Actualizar' : 'Crear' }} Cliente
+    </button>
+  </div>
+</form>
