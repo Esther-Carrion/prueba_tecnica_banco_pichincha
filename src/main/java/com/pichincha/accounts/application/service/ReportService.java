@@ -1,6 +1,6 @@
 package com.pichincha.accounts.application.service;
 
-import com.pichincha.accounts.application.port.input.ReportUseCase;
+import com.pichincha.accounts.application.port.input.ReportInputPort;
 import com.pichincha.accounts.application.port.output.AccountRepository;
 import com.pichincha.accounts.application.port.output.ClientRepository;
 import com.pichincha.accounts.application.port.output.MovementRepository;
@@ -9,10 +9,8 @@ import com.pichincha.accounts.domain.Account;
 import com.pichincha.accounts.domain.Client;
 import com.pichincha.accounts.domain.Movement;
 import com.pichincha.accounts.domain.Report;
-import com.pichincha.accounts.domain.enums.MovementType;
 import com.pichincha.accounts.domain.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +18,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional(readOnly = true)
-public class ReportService implements ReportUseCase {
+public class ReportService implements ReportInputPort {
 
     private final ClientRepository clientRepository;
     private final AccountRepository accountRepository;
@@ -38,8 +33,6 @@ public class ReportService implements ReportUseCase {
 
     @Override
     public Report generateReport(UUID clientId, LocalDate startDate, LocalDate endDate) {
-        log.info("Generating report for client ID: {} from {} to {}", clientId, startDate, endDate);
-
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado con ID: " + clientId));
 
@@ -89,24 +82,20 @@ public class ReportService implements ReportUseCase {
                 .totalBalance(totalBalance)
                 .build();
 
-        log.info("Report generated successfully for client: {}", client.getName());
+
         return report;
     }
 
     @Override
-    public String generateReportPdf(UUID clientId, LocalDate startDate, LocalDate endDate) {
-        log.info("Generating PDF report for client ID: {}", clientId);
-
+    public byte[] generateReportPdf(UUID clientId, LocalDate startDate, LocalDate endDate) {
         Report report = generateReport(clientId, startDate, endDate);
         String htmlContent = generateHtmlContent(report);
-
-        byte[] pdfBytes = pdfGeneratorPort.generatePdf(htmlContent);
-        return new String(pdfBytes);
+        return pdfGeneratorPort.generatePdf(htmlContent);
     }
 
     @Override
     public String generateReportPdfBase64(UUID clientId, LocalDate startDate, LocalDate endDate) {
-        log.info("Generating PDF Base64 report for client ID: {}", clientId);
+
 
         Report report = generateReport(clientId, startDate, endDate);
         String htmlContent = generateHtmlContent(report);
@@ -118,9 +107,9 @@ public class ReportService implements ReportUseCase {
         StringBuilder html = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        html.append("<!DOCTYPE html>");
-        html.append("<html><head>");
-        html.append("<meta charset='UTF-8'>");
+    html.append("<!DOCTYPE html>");
+    html.append("<html xmlns='http://www.w3.org/1999/xhtml'><head>");
+    html.append("<meta charset='UTF-8' />");
         html.append("<style>");
         html.append("body { font-family: Arial, sans-serif; margin: 20px; }");
         html.append("h1 { text-align: center; color: #2c3e50; }");

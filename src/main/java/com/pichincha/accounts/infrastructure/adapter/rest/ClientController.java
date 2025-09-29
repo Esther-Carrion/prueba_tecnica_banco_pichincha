@@ -1,6 +1,6 @@
 package com.pichincha.accounts.infrastructure.adapter.rest;
 
-import com.pichincha.accounts.application.port.input.ClientUseCase;
+import com.pichincha.accounts.application.port.input.ClientInputPort;
 import com.pichincha.accounts.domain.Client;
 import com.pichincha.accounts.domain.exception.ClientNotFoundException;
 import com.pichincha.accounts.infrastructure.mapper.ClientDtoMapper;
@@ -22,9 +22,10 @@ import java.util.UUID;
 @RequestMapping("/api/clientes")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class ClientController {
 
-    private final ClientUseCase clientUseCase;
+    private final ClientInputPort clientInputPort;
     private final ClientDtoMapper clientDtoMapper;
 
     @PostMapping
@@ -32,7 +33,7 @@ public class ClientController {
         log.info("Creating client with username: {}", dto.getUsername());
         Client toCreate = clientDtoMapper.toDomain(dto);
         try {
-            Client created = clientUseCase.createClient(toCreate);
+            Client created = clientInputPort.createClient(toCreate);
             return ResponseEntity.status(HttpStatus.CREATED).body(clientDtoMapper.toDto(created));
         } catch (RuntimeException e) {
             log.error("Error creating client: {}", e.getMessage());
@@ -43,7 +44,7 @@ public class ClientController {
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> getClientById(@PathVariable UUID id) {
         log.info("Getting client by ID: {}", id);
-        Optional<Client> client = clientUseCase.findById(id);
+        Optional<Client> client = clientInputPort.findById(id);
         return client.map(c -> ResponseEntity.ok(clientDtoMapper.toDto(c)))
                     .orElse(ResponseEntity.notFound().build());
     }
@@ -51,7 +52,7 @@ public class ClientController {
     @GetMapping("/clientId/{clientId}")
     public ResponseEntity<ClienteDto> getClientByClientId(@PathVariable String clientId) {
         log.info("Getting client by clientId: {}", clientId);
-        Optional<Client> client = clientUseCase.findByClientId(clientId);
+        Optional<Client> client = clientInputPort.findByClientId(clientId);
         return client.map(c -> ResponseEntity.ok(clientDtoMapper.toDto(c)))
                     .orElse(ResponseEntity.notFound().build());
     }
@@ -59,7 +60,7 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<List<ClienteDto>> getAllClients() {
         log.info("Getting all clients");
-        List<ClienteDto> clients = clientUseCase.findAll().stream()
+        List<ClienteDto> clients = clientInputPort.findAll().stream()
                 .map(clientDtoMapper::toDto)
                 .toList();
         return ResponseEntity.ok(clients);
@@ -69,9 +70,9 @@ public class ClientController {
     public ResponseEntity<ClienteDto> updateClient(@PathVariable UUID id, @Valid @RequestBody ClienteUpdateDto dto) {
         log.info("Updating client with ID: {}", id);
         try {
-            Client existing = clientUseCase.findById(id).orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado"));
+            Client existing = clientInputPort.findById(id).orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado"));
             clientDtoMapper.updateDomain(existing, dto);
-            Client updated = clientUseCase.updateClient(id, existing);
+            Client updated = clientInputPort.updateClient(id, existing);
             return ResponseEntity.ok(clientDtoMapper.toDto(updated));
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -85,7 +86,7 @@ public class ClientController {
     public ResponseEntity<Void> deleteClient(@PathVariable UUID id) {
         log.info("Deleting client with ID: {}", id);
         try {
-            clientUseCase.deleteClient(id);
+            clientInputPort.deleteClient(id);
             return ResponseEntity.noContent().build();
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -97,13 +98,13 @@ public class ClientController {
 
     @GetMapping("/exists/clientId/{clientId}")
     public ResponseEntity<Boolean> existsByClientId(@PathVariable String clientId) {
-        boolean exists = clientUseCase.existsByClientId(clientId);
+        boolean exists = clientInputPort.existsByClientId(clientId);
         return ResponseEntity.ok(exists);
     }
 
     @GetMapping("/exists/identification/{identification}")
     public ResponseEntity<Boolean> existsByIdentification(@PathVariable String identification) {
-        boolean exists = clientUseCase.existsByIdentification(identification);
+        boolean exists = clientInputPort.existsByIdentification(identification);
         return ResponseEntity.ok(exists);
     }
 }

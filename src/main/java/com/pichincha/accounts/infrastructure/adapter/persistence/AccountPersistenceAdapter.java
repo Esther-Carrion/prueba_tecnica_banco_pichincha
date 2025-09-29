@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
+
 public class AccountPersistenceAdapter implements AccountRepository {
 
     private final AccountJpaRepository accountJpaRepository;
@@ -24,7 +24,7 @@ public class AccountPersistenceAdapter implements AccountRepository {
 
     @Override
     public Account save(Account account) {
-        log.debug("Saving account to database: {}", account.getAccountNumber());
+
         AccountEntity entity = accountEntityMapper.toEntity(account);
         AccountEntity savedEntity = accountJpaRepository.save(entity);
         return accountEntityMapper.toDomain(savedEntity);
@@ -32,21 +32,21 @@ public class AccountPersistenceAdapter implements AccountRepository {
 
     @Override
     public Optional<Account> findById(UUID id) {
-        log.debug("Finding account by ID: {}", id);
+
         return accountJpaRepository.findById(id)
                 .map(accountEntityMapper::toDomain);
     }
 
     @Override
     public Optional<Account> findByAccountNumber(String accountNumber) {
-        log.debug("Finding account by number: {}", accountNumber);
+
         return accountJpaRepository.findByAccountNumber(accountNumber)
                 .map(accountEntityMapper::toDomain);
     }
 
     @Override
     public List<Account> findAll() {
-        log.debug("Finding all accounts");
+
         return accountJpaRepository.findAll()
                 .stream()
                 .map(accountEntityMapper::toDomain)
@@ -55,7 +55,7 @@ public class AccountPersistenceAdapter implements AccountRepository {
 
     @Override
     public List<Account> findByClientId(UUID clientId) {
-        log.debug("Finding accounts by client ID: {}", clientId);
+
         return accountJpaRepository.findByClientId(clientId)
                 .stream()
                 .map(accountEntityMapper::toDomain)
@@ -64,13 +64,13 @@ public class AccountPersistenceAdapter implements AccountRepository {
 
     @Override
     public void deleteById(UUID id) {
-        log.debug("Deleting account with ID: {}", id);
+
         accountJpaRepository.deleteById(id);
     }
 
     @Override
     public boolean existsByAccountNumber(String accountNumber) {
-        log.debug("Checking if account exists by number: {}", accountNumber);
+
         return accountJpaRepository.existsByAccountNumber(accountNumber);
     }
 }

@@ -1,6 +1,6 @@
 package com.pichincha.accounts.infrastructure.adapter.rest;
 
-import com.pichincha.accounts.application.port.input.AccountUseCase;
+import com.pichincha.accounts.application.port.input.AccountInputPort;
 import com.pichincha.accounts.domain.Account;
 import com.pichincha.accounts.domain.exception.AccountNotFoundException;
 import com.pichincha.accounts.infrastructure.mapper.AccountDtoMapper;
@@ -22,9 +22,10 @@ import java.util.UUID;
 @RequestMapping("/api/cuentas")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class AccountController {
 
-    private final AccountUseCase accountUseCase;
+    private final AccountInputPort accountInputPort;
     private final AccountDtoMapper accountDtoMapper;
 
     @PostMapping
@@ -32,7 +33,7 @@ public class AccountController {
         Account toCreate = accountDtoMapper.toEntity(dto);
         log.info("Creating account for client ID: {}", toCreate.getClientId());
         try {
-            Account createdAccount = accountUseCase.createAccount(toCreate);
+            Account createdAccount = accountInputPort.createAccount(toCreate);
             return ResponseEntity.status(HttpStatus.CREATED).body(accountDtoMapper.toDto(createdAccount));
         } catch (RuntimeException e) {
             log.error("Error creating account: {}", e.getMessage());
@@ -43,7 +44,7 @@ public class AccountController {
     @GetMapping("/{id}")
     public ResponseEntity<CuentaDto> getAccountById(@PathVariable UUID id) {
         log.info("Getting account by ID: {}", id);
-        Optional<Account> account = accountUseCase.findById(id);
+        Optional<Account> account = accountInputPort.findById(id);
         return account.map(a -> ResponseEntity.ok(accountDtoMapper.toDto(a)))
                      .orElse(ResponseEntity.notFound().build());
     }
@@ -51,7 +52,7 @@ public class AccountController {
     @GetMapping("/number/{accountNumber}")
     public ResponseEntity<CuentaDto> getAccountByNumber(@PathVariable String accountNumber) {
         log.info("Getting account by number: {}", accountNumber);
-        Optional<Account> account = accountUseCase.findByAccountNumber(accountNumber);
+        Optional<Account> account = accountInputPort.findByAccountNumber(accountNumber);
         return account.map(a -> ResponseEntity.ok(accountDtoMapper.toDto(a)))
                      .orElse(ResponseEntity.notFound().build());
     }
@@ -59,7 +60,7 @@ public class AccountController {
     @GetMapping
     public ResponseEntity<List<CuentaDto>> getAllAccounts() {
         log.info("Getting all accounts");
-        List<CuentaDto> accounts = accountUseCase.findAll().stream()
+        List<CuentaDto> accounts = accountInputPort.findAll().stream()
                 .map(accountDtoMapper::toDto)
                 .toList();
         return ResponseEntity.ok(accounts);
@@ -68,7 +69,7 @@ public class AccountController {
     @GetMapping("/client/{clientId}")
     public ResponseEntity<List<CuentaDto>> getAccountsByClientId(@PathVariable UUID clientId) {
         log.info("Getting accounts by client ID: {}", clientId);
-        List<CuentaDto> accounts = accountUseCase.findByClientId(clientId).stream()
+        List<CuentaDto> accounts = accountInputPort.findByClientId(clientId).stream()
                 .map(accountDtoMapper::toDto)
                 .toList();
         return ResponseEntity.ok(accounts);
@@ -78,10 +79,10 @@ public class AccountController {
     public ResponseEntity<CuentaDto> updateAccount(@PathVariable UUID id, @Valid @RequestBody CuentaUpdateDto dto) {
         log.info("Updating account with ID: {}", id);
         try {
-            Account existing = accountUseCase.findById(id)
+            Account existing = accountInputPort.findById(id)
                     .orElseThrow(() -> new AccountNotFoundException("Cuenta no encontrada"));
             accountDtoMapper.updateEntity(existing, dto);
-            Account updatedAccount = accountUseCase.updateAccount(id, existing);
+            Account updatedAccount = accountInputPort.updateAccount(id, existing);
             return ResponseEntity.ok(accountDtoMapper.toDto(updatedAccount));
         } catch (AccountNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -95,7 +96,7 @@ public class AccountController {
     public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
         log.info("Deleting account with ID: {}", id);
         try {
-            accountUseCase.deleteAccount(id);
+            accountInputPort.deleteAccount(id);
             return ResponseEntity.noContent().build();
         } catch (AccountNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -107,7 +108,7 @@ public class AccountController {
 
     @GetMapping("/exists/{accountNumber}")
     public ResponseEntity<Boolean> existsByAccountNumber(@PathVariable String accountNumber) {
-        boolean exists = accountUseCase.existsByAccountNumber(accountNumber);
+        boolean exists = accountInputPort.existsByAccountNumber(accountNumber);
         return ResponseEntity.ok(exists);
     }
 }

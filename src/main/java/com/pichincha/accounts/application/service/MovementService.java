@@ -1,6 +1,6 @@
 package com.pichincha.accounts.application.service;
 
-import com.pichincha.accounts.application.port.input.MovementUseCase;
+import com.pichincha.accounts.application.port.input.MovementInputPort;
 import com.pichincha.accounts.application.port.output.AccountRepository;
 import com.pichincha.accounts.application.port.output.MovementRepository;
 import com.pichincha.accounts.domain.Account;
@@ -11,7 +11,6 @@ import com.pichincha.accounts.domain.exception.AccountNotFoundException;
 import com.pichincha.accounts.domain.exception.InsufficientFundsException;
 import com.pichincha.accounts.domain.exception.InvalidMovementException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +23,15 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
-public class MovementService implements MovementUseCase {
+public class MovementService implements MovementInputPort {
 
     private final MovementRepository movementRepository;
     private final AccountRepository accountRepository;
 
     @Override
     public Movement createMovement(Movement movement) {
-        log.info("Creating new movement for account ID: {}", movement.getAccountId());
+
         
         if (movement.getAccountId() == null) {
             throw new InvalidMovementException("El ID de la cuenta no puede ser nulo");
@@ -82,8 +80,7 @@ public class MovementService implements MovementUseCase {
         accountRepository.save(account);
 
         Movement savedMovement = movementRepository.save(movement);
-        log.info("Movement created successfully with ID: {}, new balance: {}", 
-                savedMovement.getId(), newBalance);
+
         
         return savedMovement;
     }
@@ -91,42 +88,39 @@ public class MovementService implements MovementUseCase {
     @Override
     @Transactional(readOnly = true)
     public Optional<Movement> findById(UUID id) {
-        log.debug("Finding movement by ID: {}", id);
+
         return movementRepository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Movement> findAll() {
-        log.debug("Finding all movements");
+
         return movementRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Movement> findByAccountId(UUID accountId) {
-        log.debug("Finding movements by account ID: {}", accountId);
+
         return movementRepository.findByAccountId(accountId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Movement> findByAccountIdAndDateRange(UUID accountId, LocalDate startDate, LocalDate endDate) {
-        log.debug("Finding movements by account ID: {} and date range: {} to {}", 
-                accountId, startDate, endDate);
+
         return movementRepository.findByAccountIdAndDateRange(accountId, startDate, endDate);
     }
 
     @Override
     public Movement updateMovement(UUID id, Movement movement) {
-        log.info("Updating movement with ID: {}", id);
 
         throw new InvalidMovementException("No se permite la modificación de movimientos por integridad financiera");
     }
 
     @Override
     public void deleteMovement(UUID id) {
-        log.info("Deleting movement with ID: {}", id);
         throw new InvalidMovementException("No se permite la eliminación de movimientos por integridad financiera");
     }
     private boolean isDebitMovement(MovementType movementType) {

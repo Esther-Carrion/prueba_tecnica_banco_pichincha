@@ -1,6 +1,6 @@
 package com.pichincha.accounts.infrastructure.adapter.rest;
 
-import com.pichincha.accounts.application.port.input.ReportUseCase;
+import com.pichincha.accounts.application.port.input.ReportInputPort;
 import com.pichincha.accounts.domain.Report;
 import com.pichincha.accounts.domain.exception.ClientNotFoundException;
 import com.pichincha.accounts.infrastructure.mapper.ReportDtoMapper;
@@ -23,9 +23,10 @@ import java.util.UUID;
 @RequestMapping("/api/reportes")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class ReportController {
 
-    private final ReportUseCase reportUseCase;
+    private final ReportInputPort reportInputPort;
     private final ReportDtoMapper reportDtoMapper;
 
     @GetMapping
@@ -37,7 +38,7 @@ public class ReportController {
         log.info("Generating report for client ID: {} from {} to {}", clienteId, fechaInicio, fechaFin);
 
         try {
-            Report report = reportUseCase.generateReport(clienteId, fechaInicio, fechaFin);
+            Report report = reportInputPort.generateReport(clienteId, fechaInicio, fechaFin);
             return ResponseEntity.ok(reportDtoMapper.toDto(report));
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -56,16 +57,15 @@ public class ReportController {
         log.info("Generating PDF report for client ID: {} from {} to {}", clienteId, fechaInicio, fechaFin);
 
         try {
-            String pdfContent = reportUseCase.generateReportPdf(clienteId, fechaInicio, fechaFin);
-            byte[] pdfBytes = pdfContent.getBytes();
+            byte[] pdfBytes = reportInputPort.generateReportPdf(clienteId, fechaInicio, fechaFin);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", "reporte_" + clienteId + ".pdf");
 
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(pdfBytes);
+        return ResponseEntity.ok()
+            .headers(headers)
+            .body(pdfBytes);
 
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -84,7 +84,7 @@ public class ReportController {
         log.info("Generating PDF Base64 report for client ID: {} from {} to {}", clienteId, fechaInicio, fechaFin);
 
         try {
-            String base64Pdf = reportUseCase.generateReportPdfBase64(clienteId, fechaInicio, fechaFin);
+            String base64Pdf = reportInputPort.generateReportPdfBase64(clienteId, fechaInicio, fechaFin);
 
             Map<String, String> response = new HashMap<>();
             response.put("pdfBase64", base64Pdf);

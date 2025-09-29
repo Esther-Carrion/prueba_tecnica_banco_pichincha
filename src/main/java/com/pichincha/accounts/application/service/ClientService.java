@@ -1,12 +1,11 @@
 package com.pichincha.accounts.application.service;
 
-import com.pichincha.accounts.application.port.input.ClientUseCase;
+import com.pichincha.accounts.application.port.input.ClientInputPort;
 import com.pichincha.accounts.application.port.output.ClientRepository;
 import com.pichincha.accounts.domain.Client;
 import com.pichincha.accounts.domain.exception.ClientNotFoundException;
 import com.pichincha.accounts.util.NumberGenerate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +15,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
-public class ClientService implements ClientUseCase {
+public class ClientService implements ClientInputPort {
 
     private final ClientRepository clientRepository;
 
     @Override
     public Client createClient(Client client) {
-        log.info("Creating new client with identification: {}", client.getIdentification());
 
         if (clientRepository.existsByIdentification(client.getIdentification())) {
             throw new RuntimeException("Ya existe un cliente con la identificación: " + client.getIdentification());
@@ -47,34 +44,32 @@ public class ClientService implements ClientUseCase {
         }
         
         Client savedClient = clientRepository.save(client);
-        log.info("Client created successfully with ID: {}", savedClient.getId());
         return savedClient;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Client> findById(UUID id) {
-        log.debug("Finding client by ID: {}", id);
         return clientRepository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Client> findByClientId(String clientId) {
-        log.debug("Finding client by clientId: {}", clientId);
+
         return clientRepository.findByClientId(clientId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Client> findAll() {
-        log.debug("Finding all clients");
+
         return clientRepository.findAll();
     }
 
     @Override
     public Client updateClient(UUID id, Client client) {
-        log.info("Updating client with ID: {}", id);
+
         
         Client existingClient = clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado con ID: " + id));
@@ -106,20 +101,18 @@ public class ClientService implements ClientUseCase {
         }
         
         Client updatedClient = clientRepository.save(existingClient);
-        log.info("Client updated successfully with ID: {}", updatedClient.getId());
         return updatedClient;
     }
 
     @Override
     public void deleteClient(UUID id) {
-        log.info("Deleting client with ID: {}", id);
+
         
         if (!clientRepository.findById(id).isPresent()) {
             throw new ClientNotFoundException("Cliente no encontrado con ID: " + id);
         }
         
         clientRepository.deleteById(id);
-        log.info("Client deleted successfully with ID: {}", id);
     }
 
     @Override

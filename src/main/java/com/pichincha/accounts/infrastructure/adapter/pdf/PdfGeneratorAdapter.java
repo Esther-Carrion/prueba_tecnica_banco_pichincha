@@ -17,18 +17,17 @@ public class PdfGeneratorAdapter implements PdfGeneratorPort {
         try {
             log.debug("Generating PDF from HTML content");
             
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            
-            PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useFastMode();
-            builder.withHtmlContent(htmlContent, null);
-            builder.toStream(outputStream);
-            builder.run();
-            
-            byte[] pdfBytes = outputStream.toByteArray();
-            log.debug("PDF generated successfully, size: {} bytes", pdfBytes.length);
-            
-            return pdfBytes;
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                PdfRendererBuilder builder = new PdfRendererBuilder();
+                builder.useFastMode();
+                // base URI null can cause resource resolution issues; provide empty string
+                builder.withHtmlContent(htmlContent, "");
+                builder.toStream(outputStream);
+                builder.run();
+                byte[] pdfBytes = outputStream.toByteArray();
+                log.debug("PDF generated successfully, size: {} bytes", pdfBytes.length);
+                return pdfBytes;
+            }
         } catch (Exception e) {
             log.error("Error generating PDF", e);
             throw new RuntimeException("Error generando PDF: " + e.getMessage(), e);

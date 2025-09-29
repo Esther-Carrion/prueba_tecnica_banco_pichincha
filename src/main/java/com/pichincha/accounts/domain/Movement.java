@@ -24,8 +24,5 @@ public class Movement {
     private BigDecimal value;
     private BigDecimal balance;
     private Account account;
-
-    public MovementType getType() { return movementType; }
-    public void setType(MovementType type) { this.movementType = type; }
 }
 

@@ -1,6 +1,6 @@
 package com.pichincha.accounts.infrastructure.adapter.rest;
 
-import com.pichincha.accounts.application.port.input.MovementUseCase;
+import com.pichincha.accounts.application.port.input.MovementInputPort;
 import com.pichincha.accounts.domain.Movement;
 import com.pichincha.accounts.domain.exception.InvalidMovementException;
 import com.pichincha.accounts.infrastructure.mapper.MovementDtoMapper;
@@ -23,9 +23,10 @@ import java.util.UUID;
 @RequestMapping("/api/movimientos")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class MovementController {
 
-    private final MovementUseCase movementUseCase;
+    private final MovementInputPort movementInputPort;
     private final MovementDtoMapper movementDtoMapper;
 
     @PostMapping
@@ -33,7 +34,7 @@ public class MovementController {
         Movement movement = movementDtoMapper.toDomain(dto);
         log.info("Creating movement for account ID: {}", movement.getAccountId());
         try {
-            Movement createdMovement = movementUseCase.createMovement(movement);
+            Movement createdMovement = movementInputPort.createMovement(movement);
             return ResponseEntity.status(HttpStatus.CREATED).body(movementDtoMapper.toDto(createdMovement));
         } catch (RuntimeException e) {
             log.error("Error creating movement: {}", e.getMessage());
@@ -44,7 +45,7 @@ public class MovementController {
     @GetMapping("/{id}")
     public ResponseEntity<MovimientoDto> getMovementById(@PathVariable UUID id) {
         log.info("Getting movement by ID: {}", id);
-        Optional<Movement> movement = movementUseCase.findById(id);
+        Optional<Movement> movement = movementInputPort.findById(id);
         return movement.map(m -> ResponseEntity.ok(movementDtoMapper.toDto(m)))
                       .orElse(ResponseEntity.notFound().build());
     }
@@ -52,7 +53,7 @@ public class MovementController {
     @GetMapping
     public ResponseEntity<List<MovimientoDto>> getAllMovements() {
         log.info("Getting all movements");
-        List<MovimientoDto> movements = movementUseCase.findAll().stream()
+        List<MovimientoDto> movements = movementInputPort.findAll().stream()
                 .map(movementDtoMapper::toDto)
                 .toList();
         return ResponseEntity.ok(movements);
@@ -61,7 +62,7 @@ public class MovementController {
     @GetMapping("/account/{accountId}")
     public ResponseEntity<List<MovimientoDto>> getMovementsByAccountId(@PathVariable UUID accountId) {
         log.info("Getting movements by account ID: {}", accountId);
-        List<MovimientoDto> movements = movementUseCase.findByAccountId(accountId).stream()
+        List<MovimientoDto> movements = movementInputPort.findByAccountId(accountId).stream()
                 .map(movementDtoMapper::toDto)
                 .toList();
         return ResponseEntity.ok(movements);
@@ -76,7 +77,7 @@ public class MovementController {
         log.info("Getting movements by account ID: {} and date range: {} to {}",
                 accountId, startDate, endDate);
 
-        List<MovimientoDto> movements = movementUseCase.findByAccountIdAndDateRange(accountId, startDate, endDate).stream()
+        List<MovimientoDto> movements = movementInputPort.findByAccountIdAndDateRange(accountId, startDate, endDate).stream()
                 .map(movementDtoMapper::toDto)
                 .toList();
         return ResponseEntity.ok(movements);
@@ -86,7 +87,7 @@ public class MovementController {
     public ResponseEntity<String> updateMovement(@PathVariable UUID id, @Valid @RequestBody MovimientoCreateDto dto) {
         log.info("Attempt to update movement with ID: {}", id);
         try {
-            movementUseCase.updateMovement(id, movementDtoMapper.toDomain(dto));
+            movementInputPort.updateMovement(id, movementDtoMapper.toDomain(dto));
             return ResponseEntity.badRequest()
                     .body("No se permite la modificación de movimientos por integridad financiera");
         } catch (InvalidMovementException e) {
@@ -98,7 +99,7 @@ public class MovementController {
     public ResponseEntity<String> deleteMovement(@PathVariable UUID id) {
         log.info("Attempt to delete movement with ID: {}", id);
         try {
-            movementUseCase.deleteMovement(id);
+            movementInputPort.deleteMovement(id);
             return ResponseEntity.badRequest()
                     .body("No se permite la eliminación de movimientos por integridad financiera");
         } catch (InvalidMovementException e) {

@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.openapi.generator' version '7.0.1'
+    id 'info.solidsoft.pitest' version '1.15.0'
 }
 
 group = 'com.pichincha'
@@ -83,6 +84,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// PIT Mutation Testing (JUnit 5 plugin)
+	pitest 'org.pitest:pitest-junit5-plugin:1.2.1'
+
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -93,4 +97,25 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+// PIT configuration
+pitest {
+
+	testPlugin = 'junit5'
+	pitestVersion = '1.15.6'
+	targetClasses = ['com.pichincha.accounts.*']
+	targetTests = ['com.pichincha.accounts.*']
+	excludedClasses = [
+			'com.pichincha.accounts.AccountsApplication',
+			'com.pichincha.accounts.infrastructure.mapper.*',
+			'com.pichincha.accounts.application.port.input.*',
+			'com.pichincha.accounts.application.port.output.*',
+			'com.pichincha.accounts.infrastructure.adapter.persistence.repository.*'
+	]
+
+	reportDir = file("${buildDir}/reports/pitest/unit")
+	threads = 2
+	outputFormats = ['HTML', 'XML']
+	timestampedReports = false
 }
