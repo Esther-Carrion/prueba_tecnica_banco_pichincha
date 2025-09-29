@@ -1,0 +1,1010 @@
+openapi: 3.0.3
+info:
+  title: API Bancaria - Ejercicio Técnico
+  version: 1.0.0
+  description: API para gestionar Clientes, Cuentas, Movimientos y generacion de reportes (JSON / PDF base64).
+servers:
+  - url: /api
+    description: API base (prefijo /api en paths)
+
+tags:
+  - name: Clients
+    description: Operaciones relacionadas con clientes
+  - name: Accounts
+    description: Operaciones relacionadas con cuentas bancarias
+  - name: Movements
+    description: Operaciones relacionadas con transacciones y movimientos
+  - name: Reports
+    description: Generación de reportes y estados de cuenta
+
+paths:
+  /clientes:
+    get:
+      summary: Listar clientes
+      operationId: listClients
+      tags:
+        - Clients
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClienteDto'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    post:
+      summary: Crear cliente
+      operationId: createClient
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteCreateDto'
+      responses:
+        '201':
+          description: Cliente creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteDto'
+        '400':
+          description: Validacion / datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /clientes/{clienteId}:
+    get:
+      summary: Obtener cliente por ID
+      operationId: getClientById
+      tags:
+        - Clients
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteDto'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    put:
+      summary: Actualizar cliente
+      operationId: updateClient
+      tags:
+        - Clients
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteUpdateDto'
+      responses:
+        '200':
+          description: Cliente actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteDto'
+        '400':
+          description: Validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    delete:
+      summary: Eliminar (marcar inactivo) cliente
+      operationId: deleteClient
+      tags:
+        - Clients
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Cliente marcado/ eliminado
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /cuentas:
+    get:
+      summary: Listar cuentas
+      operationId: listAccounts
+      tags:
+        - Accounts
+      parameters:
+        - name: clienteId
+          in: query
+          schema:
+            type: string
+            format: uuid
+            description: Filtrar por cliente
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de cuentas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CuentaDto'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    post:
+      summary: Crear cuenta
+      operationId: createAccount
+      tags:
+        - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CuentaCreateDto'
+      responses:
+        '201':
+          description: Cuenta creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CuentaDto'
+        '400':
+          description: Validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /cuentas/{numeroCuenta}:
+    get:
+      summary: Obtener cuenta por numero
+      operationId: getAccountByNumber
+      tags:
+        - Accounts
+      parameters:
+        - name: numeroCuenta
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cuenta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CuentaDto'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    put:
+      summary: Actualizar cuenta
+      operationId: updateAccount
+      tags:
+        - Accounts
+      parameters:
+        - name: numeroCuenta
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CuentaUpdateDto'
+      responses:
+        '200':
+          description: Cuenta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CuentaDto'
+    delete:
+      summary: Eliminar (marcar inactiva) cuenta
+      operationId: deleteAccount
+      tags:
+        - Accounts
+      parameters:
+        - name: numeroCuenta
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Cuenta eliminada / marcada inactiva
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /movimientos:
+    get:
+      summary: Listar movimientos
+      operationId: listMovements
+      tags:
+        - Movements
+      parameters:
+        - name: clienteId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: numeroCuenta
+          in: query
+          schema:
+            type: string
+        - name: fechaDesde
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fechaHasta
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Lista de movimientos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovimientoDto'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    post:
+      summary: Crear movimiento (débito/crédito)
+      operationId: createMovement
+      tags:
+        - Movements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoCreateDto'
+      responses:
+        '201':
+          description: Movimiento creado y saldo actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovimientoDto'
+        '400':
+          description: Error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '409':
+          description: Conflicto de concurrencia (optimistic lock / version)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /movimientos/{movimientoId}:
+    get:
+      summary: Obtener movimiento por ID
+      operationId: getMovementById
+      tags:
+        - Movements
+      parameters:
+        - name: movimientoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Movimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovimientoDto'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    put:
+      summary: Actualizar movimiento (si aplica)
+      operationId: updateMovement
+      tags:
+        - Movements
+      parameters:
+        - name: movimientoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoUpdateDto'
+      responses:
+        '200':
+          description: Movimiento actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovimientoDto'
+    delete:
+      summary: Eliminar (marcar inactivo) movimiento
+      operationId: deleteMovement
+      tags:
+        - Movements
+      parameters:
+        - name: movimientoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Movimiento eliminado / marcado inactivo
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /reportes:
+    get:
+      summary: Generar estado de cuenta / reporte para un cliente en un rango de fechas
+      operationId: generateReport
+      tags:
+        - Reports
+      parameters:
+        - name: clienteId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fechaDesde
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: fechaHasta
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: formato
+          in: query
+          description: "json (default) | pdf | pdfBase64"
+          schema:
+            type: string
+            enum: [json, pdf, pdfBase64]
+            default: json
+      responses:
+        '200':
+          description: Reporte en JSON (estructura) o PDF
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ReportDto'
+                  - $ref: '#/components/schemas/ReportWithPdfBase64Dto'
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+                description: "PDF binario; usar cuando formato=pdf y Accept: application/pdf"
+        '404':
+          description: Cliente o datos no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '400':
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+components:
+  schemas:
+    PersonaDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nombre:
+          type: string
+          maxLength: 200
+        apellido:
+          type: string
+          maxLength: 200
+        genero:
+          type: string
+          enum: ["MASCULINO", "FEMENINO", "OTRO"]
+        fechaNacimiento:
+          type: string
+          format: date
+        identificacion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 50
+        direccion:
+          type: string
+        estado:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, nombre, estado]
+      example:
+        id: "9f2b7a2a-1d6f-4f1b-b2f0-123456789abc"
+        nombre: "Jose"
+        apellido: "Lema"
+        genero: "MASCULINO"
+        fechaNacimiento: "1985-01-15"
+        identificacion: "0102030405"
+        telefono: "098254785"
+        direccion: "Otavalo sn y principal"
+        estado: true
+        createdAt: "2025-08-29T12:00:00Z"
+        updatedAt: "2025-08-29T12:00:00Z"
+
+    ClienteDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        personaId:
+          type: string
+          format: uuid
+        persona:
+          $ref: '#/components/schemas/PersonaDto'
+        username:
+          type: string
+          maxLength: 100
+        estado:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, personaId, username, estado]
+      example:
+        id: "2d1f3b9a-e4aa-4fa8-9f9c-abcdef012345"
+        personaId: "9f2b7a2a-1d6f-4f1b-b2f0-123456789abc"
+        persona:
+          id: "9f2b7a2a-1d6f-4f1b-b2f0-123456789abc"
+          nombre: "Jose"
+          apellido: "Lema"
+          genero: "MASCULINO"
+          identificacion: "0102030405"
+          telefono: "098254785"
+          direccion: "Otavalo sn y principal"
+          estado: true
+        username: "jose.lema"
+        estado: true
+        createdAt: "2025-08-29T12:00:00Z"
+        updatedAt: "2025-08-29T12:00:00Z"
+
+    ClienteCreateDto:
+      type: object
+      properties:
+        persona:
+          $ref: '#/components/schemas/PersonaCreateDto'
+        username:
+          type: string
+          maxLength: 100
+        password:
+          type: string
+          format: password
+          maxLength: 512
+        estado:
+          type: boolean
+      required: [persona, username, password]
+      example:
+        persona:
+          nombre: "Marianela"
+          apellido: "Montalvo"
+          genero: "FEMENINO"
+          fechaNacimiento: "1990-03-15"
+          identificacion: "1102233344"
+          telefono: "098123456"
+          direccion: "Av. Amazonas 123"
+        username: "marianela.m"
+        password: "Passw0rd!"
+        estado: true
+
+    ClienteUpdateDto:
+      type: object
+      properties:
+        persona:
+          $ref: '#/components/schemas/PersonaUpdateDto'
+        username:
+          type: string
+          maxLength: 100
+        estado:
+          type: boolean
+      example:
+        persona:
+          nombre: "Marianela"
+          apellido: "Montalvo"
+          direccion: "Av. Amazonas 456"
+        username: "marianela.m"
+        estado: true
+
+    PersonaCreateDto:
+      type: object
+      properties:
+        nombre:
+          type: string
+          maxLength: 200
+        apellido:
+          type: string
+          maxLength: 200
+        genero:
+          type: string
+          enum: ["MASCULINO", "FEMENINO", "OTRO"]
+        fechaNacimiento:
+          type: string
+          format: date
+        identificacion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 50
+        direccion:
+          type: string
+      required: [nombre, identificacion]
+      example:
+        nombre: "Juan"
+        apellido: "Osorio"
+        genero: "MASCULINO"
+        fechaNacimiento: "1988-07-20"
+        identificacion: "1203344556"
+        telefono: "098874587"
+        direccion: "Av. 6 de Diciembre 145"
+
+    PersonaUpdateDto:
+      type: object
+      properties:
+        nombre:
+          type: string
+          maxLength: 200
+        apellido:
+          type: string
+          maxLength: 200
+        genero:
+          type: string
+          enum: ["MASCULINO", "FEMENINO", "OTRO"]
+        fechaNacimiento:
+          type: string
+          format: date
+        identificacion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 50
+        direccion:
+          type: string
+      example:
+        nombre: "Juan"
+        apellido: "Osorio"
+        genero: "MASCULINO"
+        fechaNacimiento: "1988-07-20"
+        direccion: "13 junio y Equinoccial"
+        telefono: "099123456"
+
+    CuentaDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        clienteId:
+          type: string
+          format: uuid
+        numeroCuenta:
+          type: integer
+          format: int64
+        tipo:
+          type: string
+          enum: ["AHORROS", "CORRIENTE"]
+        saldoInicial:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        saldoActual:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        estado:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, clienteId, numeroCuenta, tipo, saldoInicial, saldoActual, estado]
+      example:
+        id: "a1b2c3d4-e5f6-7890-1234-abcdef987654"
+        clienteId: "2d1f3b9a-e4aa-4fa8-9f9c-abcdef012345"
+        numeroCuenta: 478758
+        tipo: "AHORROS"
+        saldoInicial: 2000.00
+        saldoActual: 1425.00
+        estado: true
+        createdAt: "2025-08-29T12:00:00Z"
+        updatedAt: "2025-08-29T15:30:00Z"
+
+    CuentaCreateDto:
+      type: object
+      properties:
+        clienteId:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+          enum: ["AHORROS", "CORRIENTE"]
+        saldoInicial:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+          default: 0.00
+        estado:
+          type: boolean
+          default: true
+      required: [clienteId, tipo]
+      example:
+        clienteId: "2d1f3b9a-e4aa-4fa8-9f9c-abcdef012345"
+        tipo: "CORRIENTE"
+        saldoInicial: 1000.00
+        estado: true
+
+    CuentaUpdateDto:
+      type: object
+      properties:
+        tipo:
+          type: string
+          enum: ["AHORROS", "CORRIENTE"]
+        estado:
+          type: boolean
+      example:
+        tipo: "CORRIENTE"
+        estado: true
+
+    MovimientoDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        cuentaId:
+          type: string
+          format: uuid
+        fecha:
+          type: string
+          format: date-time
+        tipo:
+          type: string
+          enum: ["DEBITO", "CREDITO"]
+        valor:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        saldoPostMovimiento:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, cuentaId, fecha, tipo, valor, saldoPostMovimiento]
+      example:
+        id: "f1234567-89ab-4cde-0123-abcdefabcdef"
+        cuentaId: "a1b2c3d4-e5f6-7890-1234-abcdef987654"
+        fecha: "2025-08-28T10:30:00Z"
+        tipo: "DEBITO"
+        valor: 575.00
+        saldoPostMovimiento: 1425.00
+        createdAt: "2025-08-28T10:30:00Z"
+
+    MovimientoCreateDto:
+      type: object
+      properties:
+        cuentaId:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+          enum: ["DEBITO", "CREDITO"]
+        valor:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+      required: [cuentaId, tipo, valor]
+      example:
+        cuentaId: "a1b2c3d4-e5f6-7890-1234-abcdef987654"
+        tipo: "DEBITO"
+        valor: 575.00
+
+    MovimientoUpdateDto:
+      type: object
+      properties:
+        valor:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+      example:
+        valor: 600.00
+
+    AccountSummaryDto:
+      type: object
+      properties:
+        numeroCuenta:
+          type: integer
+          format: int64
+        tipo:
+          type: string
+          enum: ["AHORROS", "CORRIENTE"]
+        saldoInicial:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        saldoActual:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        totalDebitos:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        totalCreditos:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        movimientos:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovimientoDto'
+      required: [numeroCuenta, tipo, saldoInicial, saldoActual, totalDebitos, totalCreditos, movimientos]
+      example:
+        numeroCuenta: 478758
+        tipo: "AHORROS"
+        saldoInicial: 2000.00
+        saldoActual: 1425.00
+        totalDebitos: 575.00
+        totalCreditos: 0.00
+        movimientos:
+          - id: "f1234567-89ab-4cde-0123-abcdefabcdef"
+            cuentaId: "a1b2c3d4-e5f6-7890-1234-abcdef987654"
+            fecha: "2025-08-28T10:30:00Z"
+            tipo: "DEBITO"
+            valor: 575.00
+            saldoPostMovimiento: 1425.00
+            createdAt: "2025-08-28T10:30:00Z"
+
+    ReportDto:
+      type: object
+      properties:
+        clienteId:
+          type: string
+          format: uuid
+        clienteNombre:
+          type: string
+        fechaDesde:
+          type: string
+          format: date
+        fechaHasta:
+          type: string
+          format: date
+        cuentas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountSummaryDto'
+        totalDebitos:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+        totalCreditos:
+          type: number
+          format: decimal
+          multipleOf: 0.01
+      required: [clienteId, clienteNombre, fechaDesde, fechaHasta, cuentas, totalDebitos, totalCreditos]
+      example:
+        clienteId: "2d1f3b9a-e4aa-4fa8-9f9c-abcdef012345"
+        clienteNombre: "Marianela Montalvo"
+        fechaDesde: "2025-02-01"
+        fechaHasta: "2025-02-28"
+        totalDebitos: 575.00
+        totalCreditos: 600.00
+        cuentas:
+          - numeroCuenta: 478758
+            tipo: "AHORROS"
+            saldoInicial: 2000.00
+            saldoActual: 2025.00
+            totalDebitos: 575.00
+            totalCreditos: 600.00
+            movimientos:
+              - id: "f1234567-89ab-4cde-0123-abcdefabcdef"
+                cuentaId: "a1b2c3d4-e5f6-7890-1234-abcdef987654"
+                fecha: "2025-02-15T10:30:00Z"
+                tipo: "DEBITO"
+                valor: 575.00
+                saldoPostMovimiento: 1425.00
+                createdAt: "2025-02-15T10:30:00Z"
+              - id: "g2345678-90bc-5def-1234-bcdefabcdefg"
+                cuentaId: "a1b2c3d4-e5f6-7890-1234-abcdef987654"
+                fecha: "2025-02-20T14:15:00Z"
+                tipo: "CREDITO"
+                valor: 600.00
+                saldoPostMovimiento: 2025.00
+                createdAt: "2025-02-20T14:15:00Z"
+
+    ReportWithPdfBase64Dto:
+      allOf:
+        - $ref: '#/components/schemas/ReportDto'
+        - type: object
+          properties:
+            pdfBase64:
+              type: string
+              format: byte
+              description: "PDF codificado en base64 (cuando formato=pdfBase64)"
+          required: [pdfBase64]
+      example:
+        clienteId: "2d1f3b9a-e4aa-4fa8-9f9c-abcdef012345"
+        clienteNombre: "Marianela Montalvo"
+        fechaDesde: "2025-02-01"
+        fechaHasta: "2025-02-28"
+        totalDebitos: 575.00
+        totalCreditos: 600.00
+        cuentas: []
+        pdfBase64: "JVBERi0xLjQKJcOkw7zDtsO4w6DCjAoKMS..."
+
+    ErrorDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+      required: [timestamp, status, error, message]
+      example:
+        timestamp: "2025-08-29T12:10:00Z"
+        status: 400
+        error: "Bad Request"
+        code: "SALDO_NO_DISPONIBLE"
+        message: "Saldo no disponible para la operacion solicitada"
+        details:
+          - "Cuenta 478758 tiene saldo insuficiente"
+          - "Saldo actual: 100.00, monto solicitado: 575.00"

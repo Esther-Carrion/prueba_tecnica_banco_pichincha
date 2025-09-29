@@ -1,0 +1,1054 @@
+{
+	"info": {
+		"_postman_id": "ab123456-1234-5678-9012-123456789abc",
+		"name": "Banco Pichincha - Cuentas API - COMPLETA",
+		"description": "Colección completa de pruebas para la API de cuentas del Banco Pichincha - Microservicio de Cuentas y Movimientos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response should contain status UP\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UP\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["actuator", "health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Clientes",
+			"item": [
+				{
+					"name": "Crear Cliente - Jose Lema",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Client created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('clientId1', jsonData.id);",
+									"    pm.globals.set('clientName1', jsonData.name);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jose Lema\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 35,\n  \"identification\": \"1234567890\",\n  \"phone\": \"098254785\",\n  \"address\": \"Otavalo sn y principal\",\n  \"clientId\": \"jlema001\",\n  \"password\": \"1234\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Crear Cliente - Marianela Montalvo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Client created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('clientId2', jsonData.id);",
+									"    pm.globals.set('clientName2', jsonData.name);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Marianela Montalvo\",\n  \"gender\": \"FEMENINO\",\n  \"age\": 28,\n  \"identification\": \"0987654321\",\n  \"phone\": \"098765432\",\n  \"address\": \"Amazonas y NNUU\",\n  \"clientId\": \"mmontalvo002\",\n  \"password\": \"5678\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Crear Cliente - Juan Osorio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Client created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('clientId3', jsonData.id);",
+									"    pm.globals.set('clientName3', jsonData.name);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Juan Osorio\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 42,\n  \"identification\": \"1122334455\",\n  \"phone\": \"097548965\",\n  \"address\": \"13 junio y Equinoccial\",\n  \"clientId\": \"josorio003\",\n  \"password\": \"1245\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Todos los Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Cliente por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Cliente por ClientId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/clientId/jlema001",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "clientId", "jlema001"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar Cliente",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jose Lema Actualizado\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 36,\n  \"identification\": \"1234567890\",\n  \"phone\": \"098254785\",\n  \"address\": \"Otavalo sn y principal - Casa Azul\",\n  \"clientId\": \"jlema001\",\n  \"password\": \"1234\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Verificar si Cliente Existe por ClientId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/exists/clientId/jlema001",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "exists", "clientId", "jlema001"]
+						}
+					}
+				},
+				{
+					"name": "Verificar si Cliente Existe por Identificación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/exists/identification/1234567890",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "exists", "identification", "1234567890"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Cuentas",
+			"item": [
+				{
+					"name": "Crear Cuenta Ahorros - Jose Lema",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Account created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('accountId1', jsonData.id);",
+									"    pm.globals.set('accountNumber1', jsonData.accountNumber);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"478758\",\n  \"type\": \"AHORROS\",\n  \"initialBalance\": 2000.00,\n  \"state\": true,\n  \"clientId\": \"{{clientId1}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						}
+					}
+				},
+				{
+					"name": "Crear Cuenta Corriente - Marianela Montalvo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Account created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('accountId2', jsonData.id);",
+									"    pm.globals.set('accountNumber2', jsonData.accountNumber);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"225487\",\n  \"type\": \"CORRIENTE\",\n  \"initialBalance\": 100.00,\n  \"state\": true,\n  \"clientId\": \"{{clientId2}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						}
+					}
+				},
+				{
+					"name": "Crear Cuenta Ahorros - Juan Osorio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Account created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('accountId3', jsonData.id);",
+									"    pm.globals.set('accountNumber3', jsonData.accountNumber);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"495878\",\n  \"type\": \"AHORROS\",\n  \"initialBalance\": 0.00,\n  \"state\": true,\n  \"clientId\": \"{{clientId3}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						}
+					}
+				},
+				{
+					"name": "Crear Cuenta Corriente - Juan Osorio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Account created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.globals.set('accountId4', jsonData.id);",
+									"    pm.globals.set('accountNumber4', jsonData.accountNumber);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"496825\",\n  \"type\": \"CORRIENTE\",\n  \"initialBalance\": 540.00,\n  \"state\": true,\n  \"clientId\": \"{{clientId3}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Todas las Cuentas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Cuenta por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/{{accountId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "{{accountId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Cuenta por Número",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/number/478758",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "number", "478758"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Cuentas por Cliente ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/client/{{clientId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "client", "{{clientId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar Cuenta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"478758\",\n  \"type\": \"AHORROS\",\n  \"initialBalance\": 2000.00,\n  \"currentBalance\": 2000.00,\n  \"state\": true,\n  \"clientId\": \"{{clientId1}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/{{accountId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "{{accountId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Verificar si Cuenta Existe por Número",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/exists/478758",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "exists", "478758"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Movimientos",
+			"item": [
+				{
+					"name": "Depósito +600 - Cuenta Corriente Marianela",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Movement created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.movementType).to.eql('DEPOSITO');",
+									"    pm.globals.set('movementId1', jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"movementType\": \"DEPOSITO\",\n  \"value\": 600.00,\n  \"accountId\": \"{{accountId2}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Retiro -575 - Cuenta Ahorros Jose",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Movement created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.movementType).to.eql('RETIRO');",
+									"    pm.globals.set('movementId2', jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"movementType\": \"RETIRO\",\n  \"value\": -575.00,\n  \"accountId\": \"{{accountId1}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Depósito +1000 - Cuenta Ahorros Juan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Movement created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.movementType).to.eql('DEPOSITO');",
+									"    pm.globals.set('movementId3', jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"movementType\": \"DEPOSITO\",\n  \"value\": 1000.00,\n  \"accountId\": \"{{accountId3}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Retiro -540 - Cuenta Corriente Juan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Movement created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.movementType).to.eql('RETIRO');",
+									"    pm.globals.set('movementId4', jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"movementType\": \"RETIRO\",\n  \"value\": -540.00,\n  \"accountId\": \"{{accountId4}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Todos los Movimientos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Movimiento por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/{{movementId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "{{movementId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Movimientos por Cuenta ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/account/{{accountId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "account", "{{accountId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Movimientos por Cuenta y Rango de Fechas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/account/{{accountId1}}/dateRange?startDate=2024-01-01&endDate=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "account", "{{accountId1}}", "dateRange"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Reportes",
+			"item": [
+				{
+					"name": "Generar Reporte JSON - Jose Lema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clienteId={{clientId1}}&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "{{clientId1}}"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Generar Reporte JSON - Marianela Montalvo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clienteId={{clientId2}}&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "{{clientId2}}"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Generar Reporte JSON - Juan Osorio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clienteId={{clientId3}}&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "{{clientId3}}"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Generar Reporte Formateado - Jose Lema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes/formatted?clienteId={{clientId1}}&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes", "formatted"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "{{clientId1}}"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Generar Reporte PDF - Jose Lema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes/pdf?clienteId={{clientId1}}&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes", "pdf"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "{{clientId1}}"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Generar Reporte PDF Base64 - Jose Lema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes/pdf/base64?clienteId={{clientId1}}&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes", "pdf", "base64"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "{{clientId1}}"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Casos de Error",
+			"item": [
+				{
+					"name": "Intentar crear cliente con identificación duplicada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Cliente Duplicado\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 30,\n  \"identification\": \"1234567890\",\n  \"phone\": \"123456789\",\n  \"address\": \"Test Address\",\n  \"clientId\": \"duplicado\",\n  \"password\": \"1234\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						}
+					}
+				},
+				{
+					"name": "Intentar crear cuenta con número duplicado",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"478758\",\n  \"type\": \"AHORROS\",\n  \"initialBalance\": 1000.00,\n  \"state\": true,\n  \"clientId\": \"{{clientId1}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						}
+					}
+				},
+				{
+					"name": "Intentar retiro superior al saldo disponible",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"movementType\": \"RETIRO\",\n  \"value\": -10000.00,\n  \"accountId\": \"{{accountId1}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Buscar cliente inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/00000000-0000-0000-0000-000000000000",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "00000000-0000-0000-0000-000000000000"]
+						}
+					}
+				},
+				{
+					"name": "Generar reporte para cliente inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clienteId=00000000-0000-0000-0000-000000000000&fechaInicio=2024-01-01&fechaFin=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clienteId",
+									"value": "00000000-0000-0000-0000-000000000000"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Eliminar Datos (Cleanup)",
+			"item": [
+				{
+					"name": "Eliminar Cliente Jose Lema",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId1}}"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar Cuenta",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/{{accountId1}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "{{accountId1}}"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8081",
+			"type": "string"
+		}
+	]
+}

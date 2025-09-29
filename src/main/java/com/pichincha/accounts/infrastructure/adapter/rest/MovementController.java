@@ -1,0 +1,108 @@
+package com.pichincha.accounts.infrastructure.adapter.rest;
+
+import com.pichincha.accounts.application.port.input.MovementUseCase;
+import com.pichincha.accounts.domain.Movement;
+import com.pichincha.accounts.domain.exception.InvalidMovementException;
+import com.pichincha.accounts.infrastructure.mapper.MovementDtoMapper;
+import com.pichincha.infrastructure.adapter.rest.dto.MovimientoCreateDto;
+import com.pichincha.infrastructure.adapter.rest.dto.MovimientoDto;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/movimientos")
+@RequiredArgsConstructor
+@Slf4j
+public class MovementController {
+
+    private final MovementUseCase movementUseCase;
+    private final MovementDtoMapper movementDtoMapper;
+
+    @PostMapping
+    public ResponseEntity<MovimientoDto> createMovement(@Valid @RequestBody MovimientoCreateDto dto) {
+        Movement movement = movementDtoMapper.toDomain(dto);
+        log.info("Creating movement for account ID: {}", movement.getAccountId());
+        try {
+            Movement createdMovement = movementUseCase.createMovement(movement);
+            return ResponseEntity.status(HttpStatus.CREATED).body(movementDtoMapper.toDto(createdMovement));
+        } catch (RuntimeException e) {
+            log.error("Error creating movement: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MovimientoDto> getMovementById(@PathVariable UUID id) {
+        log.info("Getting movement by ID: {}", id);
+        Optional<Movement> movement = movementUseCase.findById(id);
+        return movement.map(m -> ResponseEntity.ok(movementDtoMapper.toDto(m)))
+                      .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MovimientoDto>> getAllMovements() {
+        log.info("Getting all movements");
+        List<MovimientoDto> movements = movementUseCase.findAll().stream()
+                .map(movementDtoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(movements);
+    }
+
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<List<MovimientoDto>> getMovementsByAccountId(@PathVariable UUID accountId) {
+        log.info("Getting movements by account ID: {}", accountId);
+        List<MovimientoDto> movements = movementUseCase.findByAccountId(accountId).stream()
+                .map(movementDtoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(movements);
+    }
+
+    @GetMapping("/account/{accountId}/dateRange")
+    public ResponseEntity<List<MovimientoDto>> getMovementsByAccountIdAndDateRange(
+            @PathVariable UUID accountId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        log.info("Getting movements by account ID: {} and date range: {} to {}",
+                accountId, startDate, endDate);
+
+        List<MovimientoDto> movements = movementUseCase.findByAccountIdAndDateRange(accountId, startDate, endDate).stream()
+                .map(movementDtoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(movements);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateMovement(@PathVariable UUID id, @Valid @RequestBody MovimientoCreateDto dto) {
+        log.info("Attempt to update movement with ID: {}", id);
+        try {
+            movementUseCase.updateMovement(id, movementDtoMapper.toDomain(dto));
+            return ResponseEntity.badRequest()
+                    .body("No se permite la modificación de movimientos por integridad financiera");
+        } catch (InvalidMovementException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteMovement(@PathVariable UUID id) {
+        log.info("Attempt to delete movement with ID: {}", id);
+        try {
+            movementUseCase.deleteMovement(id);
+            return ResponseEntity.badRequest()
+                    .body("No se permite la eliminación de movimientos por integridad financiera");
+        } catch (InvalidMovementException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}

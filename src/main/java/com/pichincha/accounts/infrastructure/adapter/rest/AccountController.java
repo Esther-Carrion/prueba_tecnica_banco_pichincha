@@ -1,0 +1,113 @@
+package com.pichincha.accounts.infrastructure.adapter.rest;
+
+import com.pichincha.accounts.application.port.input.AccountUseCase;
+import com.pichincha.accounts.domain.Account;
+import com.pichincha.accounts.domain.exception.AccountNotFoundException;
+import com.pichincha.accounts.infrastructure.mapper.AccountDtoMapper;
+import com.pichincha.infrastructure.adapter.rest.dto.CuentaCreateDto;
+import com.pichincha.infrastructure.adapter.rest.dto.CuentaDto;
+import com.pichincha.infrastructure.adapter.rest.dto.CuentaUpdateDto;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/cuentas")
+@RequiredArgsConstructor
+@Slf4j
+public class AccountController {
+
+    private final AccountUseCase accountUseCase;
+    private final AccountDtoMapper accountDtoMapper;
+
+    @PostMapping
+    public ResponseEntity<CuentaDto> createAccount(@Valid @RequestBody CuentaCreateDto dto) {
+        Account toCreate = accountDtoMapper.toEntity(dto);
+        log.info("Creating account for client ID: {}", toCreate.getClientId());
+        try {
+            Account createdAccount = accountUseCase.createAccount(toCreate);
+            return ResponseEntity.status(HttpStatus.CREATED).body(accountDtoMapper.toDto(createdAccount));
+        } catch (RuntimeException e) {
+            log.error("Error creating account: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CuentaDto> getAccountById(@PathVariable UUID id) {
+        log.info("Getting account by ID: {}", id);
+        Optional<Account> account = accountUseCase.findById(id);
+        return account.map(a -> ResponseEntity.ok(accountDtoMapper.toDto(a)))
+                     .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/number/{accountNumber}")
+    public ResponseEntity<CuentaDto> getAccountByNumber(@PathVariable String accountNumber) {
+        log.info("Getting account by number: {}", accountNumber);
+        Optional<Account> account = accountUseCase.findByAccountNumber(accountNumber);
+        return account.map(a -> ResponseEntity.ok(accountDtoMapper.toDto(a)))
+                     .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CuentaDto>> getAllAccounts() {
+        log.info("Getting all accounts");
+        List<CuentaDto> accounts = accountUseCase.findAll().stream()
+                .map(accountDtoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(accounts);
+    }
+
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<CuentaDto>> getAccountsByClientId(@PathVariable UUID clientId) {
+        log.info("Getting accounts by client ID: {}", clientId);
+        List<CuentaDto> accounts = accountUseCase.findByClientId(clientId).stream()
+                .map(accountDtoMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(accounts);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CuentaDto> updateAccount(@PathVariable UUID id, @Valid @RequestBody CuentaUpdateDto dto) {
+        log.info("Updating account with ID: {}", id);
+        try {
+            Account existing = accountUseCase.findById(id)
+                    .orElseThrow(() -> new AccountNotFoundException("Cuenta no encontrada"));
+            accountDtoMapper.updateEntity(existing, dto);
+            Account updatedAccount = accountUseCase.updateAccount(id, existing);
+            return ResponseEntity.ok(accountDtoMapper.toDto(updatedAccount));
+        } catch (AccountNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            log.error("Error updating account: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
+        log.info("Deleting account with ID: {}", id);
+        try {
+            accountUseCase.deleteAccount(id);
+            return ResponseEntity.noContent().build();
+        } catch (AccountNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            log.error("Error deleting account: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @GetMapping("/exists/{accountNumber}")
+    public ResponseEntity<Boolean> existsByAccountNumber(@PathVariable String accountNumber) {
+        boolean exists = accountUseCase.existsByAccountNumber(accountNumber);
+        return ResponseEntity.ok(exists);
+    }
+}

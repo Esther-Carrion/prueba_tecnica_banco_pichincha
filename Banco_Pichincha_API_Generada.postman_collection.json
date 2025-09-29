@@ -1,0 +1,302 @@
+{
+  "info": {
+    "name": "Banco Pichincha - API (Generada)",
+    "_postman_id": "7f2e2f88-6a73-4a6a-9a8d-9f2fead0a1f7",
+    "description": "Colección Postman para Clientes, Cuentas, Movimientos y Reportes. Usa {{baseUrl}} (por defecto http://localhost:8081).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api","clientes"] }
+          }
+        },
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"persona\": {\n    \"nombre\": \"Marianela\",\n    \"apellido\": \"Montalvo\",\n    \"genero\": \"FEMENINO\",\n    \"identificacion\": \"1102233344\",\n    \"telefono\": \"098123456\",\n    \"direccion\": \"Av. Amazonas 123\"\n  },\n  \"username\": \"marianela.m\",\n  \"password\": \"Passw0rd!\",\n  \"estado\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api","clientes"] }
+          }
+        },
+        {
+          "name": "Obtener cliente por ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/clientes/{{clientId1}}", "host": ["{{baseUrl}}"], "path": ["api","clientes","{{clientId1}}"] }
+          }
+        },
+        {
+          "name": "Obtener cliente por clientId (username)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/clientes/clientId/{{username1}}", "host": ["{{baseUrl}}"], "path": ["api","clientes","clientId","{{username1}}"] }
+          }
+        },
+        {
+          "name": "Actualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"persona\": {\n    \"nombre\": \"Marianela\",\n    \"direccion\": \"Av. Amazonas 456\"\n  },\n  \"username\": \"marianela.m\",\n  \"estado\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clientes/{{clientId1}}", "host": ["{{baseUrl}}"], "path": ["api","clientes","{{clientId1}}"] }
+          }
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/clientes/{{clientId1}}", "host": ["{{baseUrl}}"], "path": ["api","clientes","{{clientId1}}"] }
+          }
+        },
+        {
+          "name": "Existe cliente por clientId (username)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/clientes/exists/clientId/{{username1}}", "host": ["{{baseUrl}}"], "path": ["api","clientes","exists","clientId","{{username1}}"] }
+          }
+        },
+        {
+          "name": "Existe cliente por identificación",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/clientes/exists/identification/{{ident1}}", "host": ["{{baseUrl}}"], "path": ["api","clientes","exists","identification","{{ident1}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "Listar cuentas",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/cuentas", "host": ["{{baseUrl}}"], "path": ["api","cuentas"] }
+          }
+        },
+        {
+          "name": "Crear cuenta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"{{clientId1}}\",\n  \"tipo\": \"AHORROS\",\n  \"saldoInicial\": 1000.00,\n  \"estado\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuentas", "host": ["{{baseUrl}}"], "path": ["api","cuentas"] }
+          }
+        },
+        {
+          "name": "Obtener cuenta por ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/cuentas/{{accountId1}}", "host": ["{{baseUrl}}"], "path": ["api","cuentas","{{accountId1}}"] }
+          }
+        },
+        {
+          "name": "Obtener cuenta por número",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/cuentas/number/{{accountNumber1}}", "host": ["{{baseUrl}}"], "path": ["api","cuentas","number","{{accountNumber1}}"] }
+          }
+        },
+        {
+          "name": "Listar cuentas por cliente",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/cuentas/client/{{clientId1}}", "host": ["{{baseUrl}}"], "path": ["api","cuentas","client","{{clientId1}}"] }
+          }
+        },
+        {
+          "name": "Actualizar cuenta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"tipo\": \"CORRIENTE\",\n  \"estado\": true\n}" },
+            "url": { "raw": "{{baseUrl}}/api/cuentas/{{accountId1}}", "host": ["{{baseUrl}}"], "path": ["api","cuentas","{{accountId1}}"] }
+          }
+        },
+        {
+          "name": "Eliminar cuenta",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/cuentas/{{accountId1}}", "host": ["{{baseUrl}}"], "path": ["api","cuentas","{{accountId1}}"] }
+          }
+        },
+        {
+          "name": "Existe cuenta por número",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/cuentas/exists/{{accountNumber1}}", "host": ["{{baseUrl}}"], "path": ["api","cuentas","exists","{{accountNumber1}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Movements",
+      "item": [
+        {
+          "name": "Listar movimientos",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/movimientos", "host": ["{{baseUrl}}"], "path": ["api","movimientos"] }
+          }
+        },
+        {
+          "name": "Crear movimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cuentaId\": \"{{accountId1}}\",\n  \"tipo\": \"DEBITO\",\n  \"valor\": 100.00\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/movimientos", "host": ["{{baseUrl}}"], "path": ["api","movimientos"] }
+          }
+        },
+        {
+          "name": "Obtener movimiento por ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/movimientos/{{movementId1}}", "host": ["{{baseUrl}}"], "path": ["api","movimientos","{{movementId1}}"] }
+          }
+        },
+        {
+          "name": "Listar movimientos por cuenta",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/movimientos/account/{{accountId1}}", "host": ["{{baseUrl}}"], "path": ["api","movimientos","account","{{accountId1}}"] }
+          }
+        },
+        {
+          "name": "Listar movimientos por cuenta y rango de fechas",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/movimientos/account/{{accountId1}}/dateRange?startDate={{startDate}}&endDate={{endDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","movimientos","account","{{accountId1}}","dateRange"],
+              "query": [
+                { "key": "startDate", "value": "{{startDate}}" },
+                { "key": "endDate", "value": "{{endDate}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Generar reporte JSON",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes?clienteId={{clientId1}}&fechaInicio={{startDate}}&fechaFin={{endDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","reportes"],
+              "query": [
+                { "key": "clienteId", "value": "{{clientId1}}" },
+                { "key": "fechaInicio", "value": "{{startDate}}" },
+                { "key": "fechaFin", "value": "{{endDate}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Generar reporte PDF (binary)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/pdf" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/pdf?clienteId={{clientId1}}&fechaInicio={{startDate}}&fechaFin={{endDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","reportes","pdf"],
+              "query": [
+                { "key": "clienteId", "value": "{{clientId1}}" },
+                { "key": "fechaInicio", "value": "{{startDate}}" },
+                { "key": "fechaFin", "value": "{{endDate}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Generar reporte PDF Base64",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/pdf/base64?clienteId={{clientId1}}&fechaInicio={{startDate}}&fechaFin={{endDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","reportes","pdf","base64"],
+              "query": [
+                { "key": "clienteId", "value": "{{clientId1}}" },
+                { "key": "fechaInicio", "value": "{{startDate}}" },
+                { "key": "fechaFin", "value": "{{endDate}}" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8081" },
+    { "key": "username1", "value": "jose.lema" },
+    { "key": "ident1", "value": "0102030405" },
+    { "key": "clientId1", "value": "" },
+    { "key": "accountId1", "value": "" },
+    { "key": "movementId1", "value": "" },
+    { "key": "accountNumber1", "value": "478758" },
+    { "key": "startDate", "value": "2025-02-01" },
+    { "key": "endDate", "value": "2025-02-28" }
+  ]
+}

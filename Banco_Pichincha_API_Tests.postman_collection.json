@@ -1,0 +1,829 @@
+{
+	"info": {
+		"_postman_id": "ab123456-1234-5678-9012-123456789abc",
+		"name": "Banco Pichincha - API Tests",
+		"description": "Colección completa de pruebas para la API del microservicio de cuentas - Banco Pichincha",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🧑‍💼 Clientes",
+			"item": [
+				{
+					"name": "Crear Cliente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('clientId', response.id);",
+									"    pm.environment.set('clienteId', response.clientId);",
+									"    console.log('Cliente creado con ID:', response.id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jose Lema\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 35,\n  \"identification\": \"1234567890\",\n  \"phone\": \"098254785\",\n  \"address\": \"Otavalo sn y principal\",\n  \"clientId\": \"jlema001\",\n  \"password\": \"1234\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						},
+						"description": "Crear un nuevo cliente en el sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Todos los Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						},
+						"description": "Obtener la lista de todos los clientes"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Cliente por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId}}"]
+						},
+						"description": "Obtener información de un cliente específico por su ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Cliente",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jose Lema Actualizado\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 36,\n  \"identification\": \"1234567890\",\n  \"phone\": \"098254785\",\n  \"address\": \"Otavalo sn y principal - Actualizada\",\n  \"clientId\": \"jlema001\",\n  \"password\": \"12345\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId}}"]
+						},
+						"description": "Actualizar información de un cliente existente"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Cliente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId}}"]
+						},
+						"description": "Eliminar un cliente del sistema"
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones CRUD para la gestión de clientes"
+		},
+		{
+			"name": "🏦 Cuentas",
+			"item": [
+				{
+					"name": "Crear Cuenta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('accountId', response.id);",
+									"    pm.environment.set('numeroCuenta', response.accountNumber);",
+									"    console.log('Cuenta creada con ID:', response.id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"accountNumber\": \"478758\",\n  \"type\": \"AHORRO\",\n  \"initialBalance\": 2000.00,\n  \"currentBalance\": 2000.00,\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						},
+						"description": "Crear una nueva cuenta bancaria para un cliente"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Cuenta Corriente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('accountId2', response.id);",
+									"    pm.environment.set('numeroCuenta2', response.accountNumber);",
+									"    console.log('Cuenta corriente creada con ID:', response.id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"accountNumber\": \"225487\",\n  \"type\": \"CORRIENTE\",\n  \"initialBalance\": 1000.00,\n  \"currentBalance\": 1000.00,\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						},
+						"description": "Crear una cuenta corriente para testing de movimientos"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Todas las Cuentas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas"]
+						},
+						"description": "Obtener todas las cuentas del sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Cuenta por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/{{accountId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "{{accountId}}"]
+						},
+						"description": "Obtener información de una cuenta específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Cuentas por Cliente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/cliente/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "cliente", "{{clientId}}"]
+						},
+						"description": "Obtener todas las cuentas de un cliente específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Cuenta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"accountNumber\": \"478758\",\n  \"type\": \"AHORRO\",\n  \"initialBalance\": 2000.00,\n  \"currentBalance\": 2500.00,\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/{{accountId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "{{accountId}}"]
+						},
+						"description": "Actualizar información de una cuenta"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Cuenta",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cuentas/{{accountId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cuentas", "{{accountId}}"]
+						},
+						"description": "Eliminar una cuenta del sistema"
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones CRUD para la gestión de cuentas bancarias"
+		},
+		{
+			"name": "💰 Movimientos",
+			"item": [
+				{
+					"name": "Crear Depósito",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('movementId', response.id);",
+									"    console.log('Depósito creado con ID:', response.id);",
+									"    console.log('Nuevo saldo:', response.balance);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountId\": \"{{accountId2}}\",\n  \"type\": \"CREDITO\",\n  \"value\": 600.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						},
+						"description": "Realizar un depósito (crédito) en una cuenta"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Retiro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    console.log('Retiro creado con ID:', response.id);",
+									"    console.log('Nuevo saldo:', response.balance);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountId\": \"{{accountId}}\",\n  \"type\": \"DEBITO\",\n  \"value\": -575.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						},
+						"description": "Realizar un retiro (débito) de una cuenta"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Todos los Movimientos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						},
+						"description": "Obtener todos los movimientos del sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Movimiento por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/{{movementId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "{{movementId}}"]
+						},
+						"description": "Obtener un movimiento específico por ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Movimientos por Cuenta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/cuenta/{{accountId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "cuenta", "{{accountId}}"]
+						},
+						"description": "Obtener todos los movimientos de una cuenta específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Movimientos por Rango de Fechas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/cuenta/{{accountId}}?startDate=2024-01-01&endDate=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "cuenta", "{{accountId}}"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-31"
+								}
+							]
+						},
+						"description": "Obtener movimientos de una cuenta en un rango de fechas"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Movimiento",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos/{{movementId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos", "{{movementId}}"]
+						},
+						"description": "Eliminar un movimiento del sistema"
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones para la gestión de movimientos bancarios"
+		},
+		{
+			"name": "📊 Reportes",
+			"item": [
+				{
+					"name": "Generar Reporte JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clientId={{clientId}}&startDate=2024-01-01&endDate=2024-12-31&format=JSON",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clientId",
+									"value": "{{clientId}}"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-31"
+								},
+								{
+									"key": "format",
+									"value": "JSON"
+								}
+							]
+						},
+						"description": "Generar reporte de estado de cuenta en formato JSON"
+					},
+					"response": []
+				},
+				{
+					"name": "Generar Reporte PDF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clientId={{clientId}}&startDate=2024-01-01&endDate=2024-12-31&format=PDF",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clientId",
+									"value": "{{clientId}}"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-31"
+								},
+								{
+									"key": "format",
+									"value": "PDF"
+								}
+							]
+						},
+						"description": "Generar reporte de estado de cuenta en formato PDF"
+					},
+					"response": []
+				},
+				{
+					"name": "Reporte por Fecha Específica",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/reportes?clientId={{clientId}}&startDate=2024-09-01&endDate=2024-09-30&format=JSON",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reportes"],
+							"query": [
+								{
+									"key": "clientId",
+									"value": "{{clientId}}"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-09-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-09-30"
+								},
+								{
+									"key": "format",
+									"value": "JSON"
+								}
+							]
+						},
+						"description": "Generar reporte para un mes específico"
+					},
+					"response": []
+				}
+			],
+			"description": "Generación de reportes y estados de cuenta"
+		},
+		{
+			"name": "🧪 Casos de Prueba Específicos",
+			"item": [
+				{
+					"name": "Test: Crear Cliente Marianela Montalvo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('clientId2', response.id);",
+									"    console.log('Cliente Marianela creado con ID:', response.id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Marianela Montalvo\",\n  \"gender\": \"FEMENINO\",\n  \"age\": 30,\n  \"identification\": \"0987654321\",\n  \"phone\": \"097548965\",\n  \"address\": \"Amazonas y NNUU\",\n  \"clientId\": \"mmontalvo001\",\n  \"password\": \"5678\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						},
+						"description": "Crear cliente del caso de prueba"
+					},
+					"response": []
+				},
+				{
+					"name": "Test: Crear Cuenta Juan Osorio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('clientId3', response.id);",
+									"    console.log('Cliente Juan creado con ID:', response.id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Juan Osorio\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 28,\n  \"identification\": \"1122334455\",\n  \"phone\": \"098874587\",\n  \"address\": \"13 junio y Equinoccial\",\n  \"clientId\": \"josorio001\",\n  \"password\": \"1245\",\n  \"state\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes"]
+						},
+						"description": "Crear cliente Juan Osorio para testing"
+					},
+					"response": []
+				},
+				{
+					"name": "Test: Saldo No Disponible",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountId\": \"{{accountId}}\",\n  \"type\": \"DEBITO\",\n  \"value\": -10000.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "movimientos"]
+						},
+						"description": "Probar retiro con saldo insuficiente - debe generar error"
+					},
+					"response": []
+				},
+				{
+					"name": "Test: Cliente Inactivo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jose Lema\",\n  \"gender\": \"MASCULINO\",\n  \"age\": 35,\n  \"identification\": \"1234567890\",\n  \"phone\": \"098254785\",\n  \"address\": \"Otavalo sn y principal\",\n  \"clientId\": \"jlema001\",\n  \"password\": \"1234\",\n  \"state\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clientes/{{clientId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "clientes", "{{clientId}}"]
+						},
+						"description": "Desactivar cliente para testing"
+					},
+					"response": []
+				}
+			],
+			"description": "Casos de prueba específicos y escenarios de error"
+		},
+		{
+			"name": "⚙️ Sistema",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["actuator", "health"]
+						},
+						"description": "Verificar el estado de salud del microservicio"
+					},
+					"response": []
+				},
+				{
+					"name": "Info Application",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/info",
+							"host": ["{{baseUrl}}"],
+							"path": ["actuator", "info"]
+						},
+						"description": "Obtener información de la aplicación"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics",
+							"host": ["{{baseUrl}}"],
+							"path": ["actuator", "metrics"]
+						},
+						"description": "Obtener métricas del sistema"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de monitoreo y salud del sistema"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "clientId",
+			"value": "",
+			"type": "string",
+			"description": "ID del cliente principal - se establece automáticamente"
+		},
+		{
+			"key": "clientId2",
+			"value": "",
+			"type": "string",
+			"description": "ID del segundo cliente - se establece automáticamente"
+		},
+		{
+			"key": "clientId3",
+			"value": "",
+			"type": "string",
+			"description": "ID del tercer cliente - se establece automáticamente"
+		},
+		{
+			"key": "clienteId",
+			"value": "",
+			"type": "string",
+			"description": "Cliente ID (código de cliente) - se establece automáticamente"
+		},
+		{
+			"key": "accountId",
+			"value": "",
+			"type": "string",
+			"description": "ID de la cuenta principal - se establece automáticamente"
+		},
+		{
+			"key": "accountId2",
+			"value": "",
+			"type": "string",
+			"description": "ID de la segunda cuenta - se establece automáticamente"
+		},
+		{
+			"key": "numeroCuenta",
+			"value": "",
+			"type": "string",
+			"description": "Número de cuenta principal - se establece automáticamente"
+		},
+		{
+			"key": "numeroCuenta2",
+			"value": "",
+			"type": "string",
+			"description": "Número de segunda cuenta - se establece automáticamente"
+		},
+		{
+			"key": "movementId",
+			"value": "",
+			"type": "string",
+			"description": "ID del último movimiento creado - se establece automáticamente"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"exec": [
+					"// Script global que se ejecuta antes de cada request",
+					"console.log('Ejecutando request a:', pm.request.url.toString());"
+				],
+				"type": "text/javascript"
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"exec": [
+					"// Script global que se ejecuta después de cada response",
+					"console.log('Response status:', pm.response.status);",
+					"console.log('Response time:', pm.response.responseTime + 'ms');"
+				],
+				"type": "text/javascript"
+			}
+		}
+	]
+}
