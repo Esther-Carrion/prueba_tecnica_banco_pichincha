@@ -1,0 +1,72 @@
+
+.cuentas { 
+  padding: 1rem; 
+}
+
+.delete-confirmation {
+  text-align: center;
+  padding: 1rem;
+
+  &__icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: orange;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__content {
+    margin-bottom: 1rem;
+  }
+
+  &__text {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #374151;
+  }
+
+  &__details {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    border: 1px solid #e5e7eb;
+
+    strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .text-muted {
+      color: #6b7280;
+    }
+  }
+
+  &__warning {
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 1rem;
+  }
+}
+
+
+.delete-btn {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    background-color: #c82333 !important;
+    border-color: #bd2130 !important;
+  }
+}
+
+.modal__footer-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}

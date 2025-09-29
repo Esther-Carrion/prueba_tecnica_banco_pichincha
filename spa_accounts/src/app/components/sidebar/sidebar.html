@@ -1,0 +1,31 @@
+<div class="mobile-overlay" [class.mobile-overlay--active]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+<aside class="app__sidebar sidebar" [class.sidebar--open]="isMobileMenuOpen">
+  <nav class="sidebar__nav">
+    <ul class="sidebar__list">
+      <li class="sidebar__item" [class.sidebar__item--active]="active === 'clientes'">
+        <a routerLink="/clientes" routerLinkActive="sidebar__link--active" (click)="navigateTo('clientes')">
+          <i class="material-icons">group</i>
+          <span>Clientes</span>
+        </a>
+      </li>
+      <li class="sidebar__item" [class.sidebar__item--active]="active === 'cuentas'">
+        <a routerLink="/cuentas" routerLinkActive="sidebar__link--active" (click)="navigateTo('cuentas')">
+          <i class="material-icons">account_balance</i>
+          <span>Cuentas</span>
+        </a>
+      </li>
+      <li class="sidebar__item" [class.sidebar__item--active]="active === 'movimientos'">
+        <a routerLink="/movimientos" routerLinkActive="sidebar__link--active" (click)="navigateTo('movimientos')">
+          <i class="material-icons">swap_horiz</i>
+          <span>Movimientos</span>
+        </a>
+      </li>
+      <li class="sidebar__item" [class.sidebar__item--active]="active === 'reportes'">
+        <a routerLink="/reportes" routerLinkActive="sidebar__link--active" (click)="navigateTo('reportes')">
+          <i class="material-icons">analytics</i>
+          <span>Reportes</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>

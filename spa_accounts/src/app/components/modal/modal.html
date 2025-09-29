@@ -1,0 +1,33 @@
+<div 
+  *ngIf="isOpen" 
+  class="modal-backdrop" 
+  (click)="onBackdropClick()"
+  [@fadeIn]
+>
+  <div 
+    class="modal__dialog" 
+    [class]="getModalSizeClass()" 
+    [class.custom-modal]="config.customClass"
+    (click)="$event.stopPropagation()"
+    [@slideIn]
+  >
+    <div class="modal__header">
+      <h2 class="modal__title">{{ config.title }}</h2>
+      <button 
+        *ngIf="config.showCloseButton" 
+        class="modal__close-button" 
+        (click)="onClose()"
+        aria-label="Cerrar modal"
+      >
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    <div class="modal__body">
+      <ng-content></ng-content>
+    </div>
+    <div *ngIf="config.showFooter" class="modal__footer">
+      <ng-content select="[slot=footer]"></ng-content>
+      <!-- Elimino los botones por defecto para evitar duplicados -->
+    </div>
+  </div>
+</div>

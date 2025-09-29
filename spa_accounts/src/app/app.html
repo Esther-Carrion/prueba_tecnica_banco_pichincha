@@ -1,0 +1,13 @@
+<app-top-bar (mobileMenuToggle)="onMobileMenuToggle()"></app-top-bar>
+<div class="app-wrapper">
+  <div class="app">
+    <app-sidebar [active]="section()" (sectionChange)="onSectionChange($event)"></app-sidebar>
+    <div class="app__content content">
+      <app-header [title]="title()"></app-header>
+      <section class="content__body">
+        <router-outlet></router-outlet>
+      </section>
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>
