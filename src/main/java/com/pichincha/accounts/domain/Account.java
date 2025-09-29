@@ -40,7 +40,6 @@ public class Account {
     @JsonProperty("state")
     private Boolean state;
     
-    // Additional getters and setters to ensure MapStruct compatibility
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     

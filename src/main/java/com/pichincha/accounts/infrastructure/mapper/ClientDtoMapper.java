@@ -13,7 +13,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface ClientDtoMapper {
 
-    // Create DTO -> Domain
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "persona.nombre", target = "name")
     @Mapping(source = "persona.genero", target = "gender")
@@ -26,7 +25,6 @@ public interface ClientDtoMapper {
     @Mapping(source = "estado", target = "state")
     Client toDomain(ClienteCreateDto dto);
 
-    // Read DTO -> Domain
     @Mapping(source = "id", target = "id")
     @Mapping(source = "persona.nombre", target = "name")
     @Mapping(source = "persona.genero", target = "gender")
@@ -39,7 +37,6 @@ public interface ClientDtoMapper {
     @Mapping(source = "estado", target = "state")
     Client toDomain(ClienteDto dto);
 
-    // Domain -> DTO
     @Mapping(source = "id", target = "id")
     @Mapping(target = "personaId", ignore = true)
     @Mapping(source = "clientId", target = "username")
@@ -49,7 +46,6 @@ public interface ClientDtoMapper {
     @Mapping(target = "persona", expression = "java(toPersonaDto(entity))")
     ClienteDto toDto(Client entity);
 
-    // Update DTO -> Domain (partial)
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "persona.nombre", target = "name")
     @Mapping(source = "persona.genero", target = "gender")
@@ -62,7 +58,6 @@ public interface ClientDtoMapper {
     @Mapping(source = "estado", target = "state")
     void updateDomain(@MappingTarget Client entity, ClienteUpdateDto dto);
 
-    // Helper to map Person fields
     default PersonaDto toPersonaDto(Client entity) {
         if (entity == null) return null;
         PersonaDto persona = new PersonaDto(entity.getId(), entity.getName(), entity.getState() != null ? entity.getState() : Boolean.TRUE);

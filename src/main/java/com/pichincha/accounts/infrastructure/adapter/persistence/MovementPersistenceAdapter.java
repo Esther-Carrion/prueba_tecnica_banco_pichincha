@@ -28,7 +28,6 @@ public class MovementPersistenceAdapter implements MovementRepository {
     @Override
     public Movement save(Movement movement) {
         log.debug("Saving movement to database for account: {}", movement.getAccountId());
-        // No forzar id a null; JPA maneja insert vs update según id
         MovementEntity entity = movementEntityMapper.toEntity(movement);
         MovementEntity savedEntity = movementJpaRepository.save(entity);
         return movementEntityMapper.toDomain(savedEntity);

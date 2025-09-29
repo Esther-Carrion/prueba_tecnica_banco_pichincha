@@ -37,7 +37,6 @@ public class Person {
     @JsonProperty("address")
     private String address;
     
-    // Additional getters and setters to ensure MapStruct compatibility
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     

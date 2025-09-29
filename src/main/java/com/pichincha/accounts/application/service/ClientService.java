@@ -25,15 +25,11 @@ public class ClientService implements ClientUseCase {
     @Override
     public Client createClient(Client client) {
         log.info("Creating new client with identification: {}", client.getIdentification());
-        
-        // Validar que no exista cliente con la misma identificación
+
         if (clientRepository.existsByIdentification(client.getIdentification())) {
             throw new RuntimeException("Ya existe un cliente con la identificación: " + client.getIdentification());
         }
-        
-        // JPA generará automáticamente el ID con @GeneratedValue - no establecer manualmente
-        
-        // Generar clientId único si no se proporciona
+
         if (client.getClientId() == null || client.getClientId().isEmpty()) {
             String clientId;
             do {
@@ -41,13 +37,11 @@ public class ClientService implements ClientUseCase {
             } while (clientRepository.existsByClientId(clientId));
             client.setClientId(clientId);
         }
-        
-        // Validar que el clientId sea único
+
         if (clientRepository.existsByClientId(client.getClientId())) {
             throw new RuntimeException("Ya existe un cliente con el ID: " + client.getClientId());
         }
-        
-        // Estado inicial activo
+
         if (client.getState() == null) {
             client.setState(true);
         }
@@ -84,8 +78,7 @@ public class ClientService implements ClientUseCase {
         
         Client existingClient = clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado con ID: " + id));
-        
-        // Actualizar campos de Person (heredados)
+
         if (client.getName() != null) {
             existingClient.setName(client.getName());
         }
@@ -104,8 +97,7 @@ public class ClientService implements ClientUseCase {
         if (client.getAddress() != null) {
             existingClient.setAddress(client.getAddress());
         }
-        
-        // Actualizar campos específicos de Client
+
         if (client.getPassword() != null) {
             existingClient.setPassword(client.getPassword());
         }
@@ -142,25 +134,3 @@ public class ClientService implements ClientUseCase {
         return clientRepository.existsByIdentification(identification);
     }
 }
-/*
-            existingClient.setPassword(client.getPassword());
-        }
-        if (client.getState() != null) {
-            existingClient.setState(client.getState());
-        }
-        
-        return clientOutputPort.save(existingClient);
-    }
-
-    @Override
-    public void deleteClient(UUID id) {
-        clientOutputPort.deleteById(id);
-    }
-
-    @Override
-    public List<Client> getAllClients() {
-        return clientOutputPort.findAll();
-    }
-}
-
- */

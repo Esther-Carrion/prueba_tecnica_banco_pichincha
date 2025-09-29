@@ -27,7 +27,6 @@ public class ClientPersistenceAdapter implements ClientRepository {
         log.debug("Saving client to database: {}", client.getIdentification());
         log.debug("Client domain object: name={}, clientId={}, state={}", 
                  client.getName(), client.getClientId(), client.getState());
-        // No forzar id a null; si trae id, se actualizará.
         ClientEntity entity = clientEntityMapper.toEntity(client);
         log.debug("Mapped entity: name={}, clientId={}, state={}", 
                  entity.getName(), entity.getClientId(), entity.getState());

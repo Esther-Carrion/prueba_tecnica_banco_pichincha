@@ -30,31 +30,24 @@ public class AccountService implements AccountUseCase {
     @Override
     public Account createAccount(Account account) {
         log.info("Creating new account for client ID: {}", account.getClientId());
-        
-        // Validar que el cliente exista
+
         Client client = clientRepository.findById(account.getClientId())
                 .orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado con ID: " + account.getClientId()));
-        
-        // Validar que el cliente esté activo
+
         if (!client.getState()) {
             throw new RuntimeException("No se puede crear cuenta para un cliente inactivo");
         }
-        
-        // NO establecer el ID manualmente - JPA lo generará automáticamente con @GeneratedValue
-        
-        // Generar número de cuenta único
+
         String accountNumber;
         do {
             accountNumber = generateAccountNumber();
         } while (accountRepository.existsByAccountNumber(accountNumber));
         account.setAccountNumber(accountNumber);
-        
-        // Estado inicial activo
+
         if (account.getState() == null) {
             account.setState(true);
         }
-        
-        // El saldo actual inicialmente es igual al saldo inicial
+
         account.setCurrentBalance(account.getInitialBalance());
         
         Account savedAccount = accountRepository.save(account);
@@ -96,8 +89,7 @@ public class AccountService implements AccountUseCase {
         
         Account existingAccount = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException("Cuenta no encontrada con ID: " + id));
-        
-        // Solo actualizar campos permitidos (no el número de cuenta ni saldos)
+
         if (account.getType() != null) {
             existingAccount.setType(account.getType());
         }
@@ -116,8 +108,7 @@ public class AccountService implements AccountUseCase {
         
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException("Cuenta no encontrada con ID: " + id));
-        
-        // Validar que la cuenta tenga saldo cero antes de eliminar
+
         if (account.getCurrentBalance().compareTo(java.math.BigDecimal.ZERO) != 0) {
             throw new RuntimeException("No se puede eliminar una cuenta con saldo diferente a cero");
         }
@@ -132,27 +123,3 @@ public class AccountService implements AccountUseCase {
         return accountRepository.existsByAccountNumber(accountNumber);
     }
 }
-/*
-    public List<Account> getAccountsByClientId(UUID clientId) {
-        return accountOutputPort.findByClientId(clientId);
-    }
-
-    @Override
-    public Account updateAccount(UUID id, Account account) {
-        Account existingAccount = getAccountById(id);
-
-        if (account.getState() != null) {
-            existingAccount.setState(account.getState());
-        }
-        
-        return accountOutputPort.save(existingAccount);
-    }
-
-    @Override
-    public void deleteAccount(UUID id) {
-        Account account = getAccountById(id);
-        accountOutputPort.deleteById(id);
-    }
-}
-
- */

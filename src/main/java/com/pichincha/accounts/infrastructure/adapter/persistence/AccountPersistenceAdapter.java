@@ -25,7 +25,6 @@ public class AccountPersistenceAdapter implements AccountRepository {
     @Override
     public Account save(Account account) {
         log.debug("Saving account to database: {}", account.getAccountNumber());
-        // Importante: NO forzar id a null; si viene con id, JPA hará update.
         AccountEntity entity = accountEntityMapper.toEntity(account);
         AccountEntity savedEntity = accountJpaRepository.save(entity);
         return accountEntityMapper.toDomain(savedEntity);

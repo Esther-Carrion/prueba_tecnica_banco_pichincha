@@ -24,8 +24,7 @@ public class Movement {
     private BigDecimal value;
     private BigDecimal balance;
     private Account account;
-    
-    // Alias methods for compatibility with different naming conventions
+
     public MovementType getType() { return movementType; }
     public void setType(MovementType type) { this.movementType = type; }
 }

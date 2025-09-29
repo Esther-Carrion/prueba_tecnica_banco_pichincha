@@ -16,7 +16,6 @@ import java.time.ZoneOffset;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MovementDtoMapper {
 
-    // ---- CreateDto -> Domain ----
     default Movement toDomain(MovimientoCreateDto dto) {
         if (dto == null) return null;
         Movement movement = new Movement();
@@ -27,7 +26,6 @@ public interface MovementDtoMapper {
         return movement;
     }
 
-    // ---- Domain -> Dto ----
     default MovimientoDto toDto(Movement movement) {
         if (movement == null) return null;
     MovimientoDto dto = new MovimientoDto(
@@ -41,7 +39,6 @@ public interface MovementDtoMapper {
         return dto;
     }
 
-    // ---- Helpers ----
     private static MovimientoCreateDto.TipoEnum mapDomainToTipoEnum(MovementType type) {
         if (type == null) return null;
         return switch (type) {

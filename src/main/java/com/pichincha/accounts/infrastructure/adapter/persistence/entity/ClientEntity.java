@@ -21,7 +21,6 @@ public class ClientEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    // Campos heredados de Person
     @Column(name = "nombre", nullable = false)
     private String name;
 
@@ -41,7 +40,6 @@ public class ClientEntity {
     @Column(name = "direccion")
     private String address;
 
-    // Campos específicos de Client
     @Column(name = "cliente_id", unique = true, nullable = false)
     private String clientId;
 
