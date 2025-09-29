@@ -21,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/cuentas")
 @RequiredArgsConstructor
-@Slf4j
+
 @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class AccountController {
 
@@ -31,19 +31,19 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<CuentaDto> createAccount(@Valid @RequestBody CuentaCreateDto dto) {
         Account toCreate = accountDtoMapper.toEntity(dto);
-        log.info("Creating account for client ID: {}", toCreate.getClientId());
+
         try {
             Account createdAccount = accountInputPort.createAccount(toCreate);
             return ResponseEntity.status(HttpStatus.CREATED).body(accountDtoMapper.toDto(createdAccount));
         } catch (RuntimeException e) {
-            log.error("Error creating account: {}", e.getMessage());
+
             throw e;
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CuentaDto> getAccountById(@PathVariable UUID id) {
-        log.info("Getting account by ID: {}", id);
+
         Optional<Account> account = accountInputPort.findById(id);
         return account.map(a -> ResponseEntity.ok(accountDtoMapper.toDto(a)))
                      .orElse(ResponseEntity.notFound().build());
@@ -51,7 +51,7 @@ public class AccountController {
 
     @GetMapping("/number/{accountNumber}")
     public ResponseEntity<CuentaDto> getAccountByNumber(@PathVariable String accountNumber) {
-        log.info("Getting account by number: {}", accountNumber);
+
         Optional<Account> account = accountInputPort.findByAccountNumber(accountNumber);
         return account.map(a -> ResponseEntity.ok(accountDtoMapper.toDto(a)))
                      .orElse(ResponseEntity.notFound().build());
@@ -59,7 +59,7 @@ public class AccountController {
 
     @GetMapping
     public ResponseEntity<List<CuentaDto>> getAllAccounts() {
-        log.info("Getting all accounts");
+
         List<CuentaDto> accounts = accountInputPort.findAll().stream()
                 .map(accountDtoMapper::toDto)
                 .toList();
@@ -68,7 +68,7 @@ public class AccountController {
 
     @GetMapping("/client/{clientId}")
     public ResponseEntity<List<CuentaDto>> getAccountsByClientId(@PathVariable UUID clientId) {
-        log.info("Getting accounts by client ID: {}", clientId);
+
         List<CuentaDto> accounts = accountInputPort.findByClientId(clientId).stream()
                 .map(accountDtoMapper::toDto)
                 .toList();
@@ -77,7 +77,7 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CuentaDto> updateAccount(@PathVariable UUID id, @Valid @RequestBody CuentaUpdateDto dto) {
-        log.info("Updating account with ID: {}", id);
+
         try {
             Account existing = accountInputPort.findById(id)
                     .orElseThrow(() -> new AccountNotFoundException("Cuenta no encontrada"));
@@ -87,21 +87,21 @@ public class AccountController {
         } catch (AccountNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error updating account: {}", e.getMessage());
+
             throw e;
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
-        log.info("Deleting account with ID: {}", id);
+
         try {
             accountInputPort.deleteAccount(id);
             return ResponseEntity.noContent().build();
         } catch (AccountNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error deleting account: {}", e.getMessage());
+
             throw e;
         }
     }

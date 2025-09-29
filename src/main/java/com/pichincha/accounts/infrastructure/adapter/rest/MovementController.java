@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/movimientos")
 @RequiredArgsConstructor
-@Slf4j
+
 @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class MovementController {
 
@@ -32,19 +32,19 @@ public class MovementController {
     @PostMapping
     public ResponseEntity<MovimientoDto> createMovement(@Valid @RequestBody MovimientoCreateDto dto) {
         Movement movement = movementDtoMapper.toDomain(dto);
-        log.info("Creating movement for account ID: {}", movement.getAccountId());
+
         try {
             Movement createdMovement = movementInputPort.createMovement(movement);
             return ResponseEntity.status(HttpStatus.CREATED).body(movementDtoMapper.toDto(createdMovement));
         } catch (RuntimeException e) {
-            log.error("Error creating movement: {}", e.getMessage());
+
             throw e;
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MovimientoDto> getMovementById(@PathVariable UUID id) {
-        log.info("Getting movement by ID: {}", id);
+
         Optional<Movement> movement = movementInputPort.findById(id);
         return movement.map(m -> ResponseEntity.ok(movementDtoMapper.toDto(m)))
                       .orElse(ResponseEntity.notFound().build());
@@ -52,7 +52,7 @@ public class MovementController {
 
     @GetMapping
     public ResponseEntity<List<MovimientoDto>> getAllMovements() {
-        log.info("Getting all movements");
+
         List<MovimientoDto> movements = movementInputPort.findAll().stream()
                 .map(movementDtoMapper::toDto)
                 .toList();
@@ -61,7 +61,7 @@ public class MovementController {
 
     @GetMapping("/account/{accountId}")
     public ResponseEntity<List<MovimientoDto>> getMovementsByAccountId(@PathVariable UUID accountId) {
-        log.info("Getting movements by account ID: {}", accountId);
+
         List<MovimientoDto> movements = movementInputPort.findByAccountId(accountId).stream()
                 .map(movementDtoMapper::toDto)
                 .toList();
@@ -74,8 +74,6 @@ public class MovementController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
-        log.info("Getting movements by account ID: {} and date range: {} to {}",
-                accountId, startDate, endDate);
 
         List<MovimientoDto> movements = movementInputPort.findByAccountIdAndDateRange(accountId, startDate, endDate).stream()
                 .map(movementDtoMapper::toDto)
@@ -85,7 +83,7 @@ public class MovementController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateMovement(@PathVariable UUID id, @Valid @RequestBody MovimientoCreateDto dto) {
-        log.info("Attempt to update movement with ID: {}", id);
+
         try {
             movementInputPort.updateMovement(id, movementDtoMapper.toDomain(dto));
             return ResponseEntity.badRequest()
@@ -97,7 +95,7 @@ public class MovementController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMovement(@PathVariable UUID id) {
-        log.info("Attempt to delete movement with ID: {}", id);
+
         try {
             movementInputPort.deleteMovement(id);
             return ResponseEntity.badRequest()

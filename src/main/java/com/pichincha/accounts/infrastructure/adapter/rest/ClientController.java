@@ -21,7 +21,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/clientes")
 @RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class ClientController {
 
@@ -30,20 +29,18 @@ public class ClientController {
 
     @PostMapping
     public ResponseEntity<ClienteDto> createClient(@Valid @RequestBody ClienteCreateDto dto) {
-        log.info("Creating client with username: {}", dto.getUsername());
+
         Client toCreate = clientDtoMapper.toDomain(dto);
         try {
             Client created = clientInputPort.createClient(toCreate);
             return ResponseEntity.status(HttpStatus.CREATED).body(clientDtoMapper.toDto(created));
         } catch (RuntimeException e) {
-            log.error("Error creating client: {}", e.getMessage());
             throw e;
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> getClientById(@PathVariable UUID id) {
-        log.info("Getting client by ID: {}", id);
         Optional<Client> client = clientInputPort.findById(id);
         return client.map(c -> ResponseEntity.ok(clientDtoMapper.toDto(c)))
                     .orElse(ResponseEntity.notFound().build());
@@ -51,7 +48,7 @@ public class ClientController {
 
     @GetMapping("/clientId/{clientId}")
     public ResponseEntity<ClienteDto> getClientByClientId(@PathVariable String clientId) {
-        log.info("Getting client by clientId: {}", clientId);
+
         Optional<Client> client = clientInputPort.findByClientId(clientId);
         return client.map(c -> ResponseEntity.ok(clientDtoMapper.toDto(c)))
                     .orElse(ResponseEntity.notFound().build());
@@ -59,7 +56,7 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<List<ClienteDto>> getAllClients() {
-        log.info("Getting all clients");
+
         List<ClienteDto> clients = clientInputPort.findAll().stream()
                 .map(clientDtoMapper::toDto)
                 .toList();
@@ -68,7 +65,7 @@ public class ClientController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDto> updateClient(@PathVariable UUID id, @Valid @RequestBody ClienteUpdateDto dto) {
-        log.info("Updating client with ID: {}", id);
+
         try {
             Client existing = clientInputPort.findById(id).orElseThrow(() -> new ClientNotFoundException("Cliente no encontrado"));
             clientDtoMapper.updateDomain(existing, dto);
@@ -77,21 +74,20 @@ public class ClientController {
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error updating client: {}", e.getMessage());
             throw e;
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable UUID id) {
-        log.info("Deleting client with ID: {}", id);
+
         try {
             clientInputPort.deleteClient(id);
             return ResponseEntity.noContent().build();
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error deleting client: {}", e.getMessage());
+
             throw e;
         }
     }

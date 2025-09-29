@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
+
 public class MovementPersistenceAdapter implements MovementRepository {
 
     private final MovementJpaRepository movementJpaRepository;
@@ -27,7 +27,6 @@ public class MovementPersistenceAdapter implements MovementRepository {
 
     @Override
     public Movement save(Movement movement) {
-        log.debug("Saving movement to database for account: {}", movement.getAccountId());
         MovementEntity entity = movementEntityMapper.toEntity(movement);
         MovementEntity savedEntity = movementJpaRepository.save(entity);
         return movementEntityMapper.toDomain(savedEntity);
@@ -35,14 +34,14 @@ public class MovementPersistenceAdapter implements MovementRepository {
 
     @Override
     public Optional<Movement> findById(UUID id) {
-        log.debug("Finding movement by ID: {}", id);
+
         return movementJpaRepository.findById(id)
                 .map(movementEntityMapper::toDomain);
     }
 
     @Override
     public List<Movement> findAll() {
-        log.debug("Finding all movements");
+
         return movementJpaRepository.findAll()
                 .stream()
                 .map(movementEntityMapper::toDomain)
@@ -51,7 +50,7 @@ public class MovementPersistenceAdapter implements MovementRepository {
 
     @Override
     public List<Movement> findByAccountId(UUID accountId) {
-        log.debug("Finding movements by account ID: {}", accountId);
+
         return movementJpaRepository.findByAccountIdOrderByDateDesc(accountId)
                 .stream()
                 .map(movementEntityMapper::toDomain)
@@ -60,8 +59,6 @@ public class MovementPersistenceAdapter implements MovementRepository {
 
     @Override
     public List<Movement> findByAccountIdAndDateRange(UUID accountId, LocalDate startDate, LocalDate endDate) {
-        log.debug("Finding movements by account ID: {} and date range: {} to {}", accountId, startDate, endDate);
-        
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
         
@@ -73,7 +70,7 @@ public class MovementPersistenceAdapter implements MovementRepository {
 
     @Override
     public void deleteById(UUID id) {
-        log.debug("Deleting movement with ID: {}", id);
+
         movementJpaRepository.deleteById(id);
     }
 }

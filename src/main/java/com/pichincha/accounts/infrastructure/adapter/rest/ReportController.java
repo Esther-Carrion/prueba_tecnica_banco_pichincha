@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/reportes")
 @RequiredArgsConstructor
-@Slf4j
+
 @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"})
 public class ReportController {
 
@@ -35,15 +35,13 @@ public class ReportController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        log.info("Generating report for client ID: {} from {} to {}", clienteId, fechaInicio, fechaFin);
-
         try {
             Report report = reportInputPort.generateReport(clienteId, fechaInicio, fechaFin);
             return ResponseEntity.ok(reportDtoMapper.toDto(report));
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error generating report: {}", e.getMessage());
+
             throw e;
         }
     }
@@ -54,9 +52,7 @@ public class ReportController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        log.info("Generating PDF report for client ID: {} from {} to {}", clienteId, fechaInicio, fechaFin);
-
-        try {
+         try {
             byte[] pdfBytes = reportInputPort.generateReportPdf(clienteId, fechaInicio, fechaFin);
 
             HttpHeaders headers = new HttpHeaders();
@@ -70,7 +66,7 @@ public class ReportController {
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error generating PDF report: {}", e.getMessage());
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -80,8 +76,6 @@ public class ReportController {
             @RequestParam UUID clienteId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-
-        log.info("Generating PDF Base64 report for client ID: {} from {} to {}", clienteId, fechaInicio, fechaFin);
 
         try {
             String base64Pdf = reportInputPort.generateReportPdfBase64(clienteId, fechaInicio, fechaFin);
@@ -95,7 +89,7 @@ public class ReportController {
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (RuntimeException e) {
-            log.error("Error generating PDF Base64 report: {}", e.getMessage());
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
