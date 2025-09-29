@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Banco Pichincha - API (Generada)",
+    "name": "Banco Pichincha - API",
     "_postman_id": "7f2e2f88-6a73-4a6a-9a8d-9f2fead0a1f7",
     "description": "Colección Postman para Clientes, Cuentas, Movimientos y Reportes. Usa {{baseUrl}} (por defecto http://localhost:8081).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
