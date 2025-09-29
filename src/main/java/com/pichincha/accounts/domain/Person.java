@@ -20,10 +20,7 @@ public class Person {
     
     @JsonProperty("name")
     private String name;
-    
-    // Not persisted currently; used to transport Persona.apellido
-    @JsonProperty("lastName")
-    private String lastName;
+
     
     @JsonProperty("gender")
     private Gender gender;
@@ -46,9 +43,7 @@ public class Person {
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+
     
     public Gender getGender() { return gender; }
     public void setGender(Gender gender) { this.gender = gender; }
